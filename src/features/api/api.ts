@@ -28,9 +28,9 @@ keycloak
   .init({
     onLoad: 'login-required',
   })
-  .then(authenticated => {
+  .then(async authenticated => {
     console.log('Keycloak login', {authenticated, keycloak})
-    const result = login(keycloak.token!)
+    const result = await login(keycloak.token!)
     console.log({result})
   })
   .catch(error => {
