@@ -6,18 +6,20 @@ const keycloak = new Keycloak({
   realm: import.meta.env.VITE_KEYCLOAK_REALM,
   clientId: import.meta.env.VITE_KEYCLOAK_CLIENTID,
 })
-keycloak.init({
-  onLoad: 'login-required',
-})
-
-const defaultFetchOptions = {
-  headers: {
-    Authorization: `Bearer ${keycloak.token}`,
-  },
-}
+keycloak
+  .init({
+    onLoad: 'login-required',
+  })
+  .catch(error => {
+    console.warn(error)
+  })
 
 async function fetchWithPath(path: string) {
-  const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}${path}`, defaultFetchOptions)
+  const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}${path}`, {
+    headers: {
+      Authorization: `Bearer ${keycloak.token}`,
+    },
+  })
   if (!response.ok) {
     const result = await response.json()
     throw new Error(result.message)
