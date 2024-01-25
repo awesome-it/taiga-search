@@ -27,6 +27,7 @@ const keycloak = new Keycloak({
 keycloak
   .init({
     onLoad: 'login-required',
+    scope: 'openid email',
   })
   .then(async authenticated => {
     console.log('Keycloak login', {authenticated, keycloak})
