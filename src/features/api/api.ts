@@ -27,7 +27,6 @@ const keycloak = new Keycloak({
 keycloak
   .init({
     onLoad: 'login-required',
-    flow: 'implicit',
     scope: 'openid email',
   })
   .then(async authenticated => {
