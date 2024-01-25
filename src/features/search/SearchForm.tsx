@@ -10,7 +10,7 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
   const onSubmitHandler: FormEventHandler<HTMLFormElement> = useCallback(
     e => {
       e.preventDefault()
-      navigate(`/search/${searchInput}`)
+      navigate(`/${searchInput}`)
     },
     [navigate, searchInput],
   )
