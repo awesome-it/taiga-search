@@ -6,6 +6,7 @@ async function login(keycloakToken: string) {
     headers: {
       'Content-type': 'application/json',
     },
+    method: 'POST',
     body: JSON.stringify({
       type: 'openid',
       code: keycloakToken,
