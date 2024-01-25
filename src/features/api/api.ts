@@ -10,8 +10,11 @@ keycloak
   .init({
     onLoad: 'login-required',
   })
+  .then(authenticated => {
+    console.log('Keycloak login', {authenticated, keycloak})
+  })
   .catch(error => {
-    console.warn(error)
+    console.warn('Keycloak init', {error})
   })
 
 async function fetchWithPath(path: string) {
