@@ -1,4 +1,4 @@
-FROM node:latest as base
+FROM node:21-alpine as base
 WORKDIR /usr/src/app
 COPY package.json ./
 RUN npm install
