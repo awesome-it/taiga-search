@@ -6,16 +6,21 @@ import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import App from './App.tsx'
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <App />,
+    },
+    {
+      path: '/:searchTerm',
+      element: <App />,
+    },
+  ],
   {
-    path: '/search',
-    element: <App />,
+    basename: '/search',
   },
-  {
-    path: '/search/:searchTerm',
-    element: <App />,
-  },
-])
+)
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
