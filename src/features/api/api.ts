@@ -1,4 +1,4 @@
-import Keycloak from 'keycloak-js'
+import Keycloak, {KeycloakAdapter} from 'keycloak-js'
 import {Issue, Project, SearchResults, Task, User, UserStory} from '../../types/taiga.ts'
 
 async function login(keycloakToken: string) {
@@ -19,6 +19,15 @@ async function login(keycloakToken: string) {
   }
   return response.json()
 }
+
+// const KeycloakTaigaAdapter: KeycloakAdapter = {
+//   login(options) {},
+//   logout(options) {},
+//   register(options) {},
+//   accountManagement() {},
+//   redirectUri(options, encodeHash) {},
+// }
+
 const keycloak = new Keycloak({
   url: import.meta.env.VITE_KEYCLOAK_URL,
   realm: import.meta.env.VITE_KEYCLOAK_REALM,
@@ -27,8 +36,9 @@ const keycloak = new Keycloak({
 keycloak
   .init({
     onLoad: 'login-required',
-    flow: 'hybrid',
-    scope: 'openid email',
+    enableLogging: true,
+    // flow: 'hybrid',
+    // scope: 'openid email',
   })
   .then(async authenticated => {
     console.log('Keycloak login', {authenticated, keycloak})
