@@ -25,27 +25,26 @@ const router = createBrowserRouter(
   },
 )
 const queryClient = new QueryClient()
+async function login(keycloakToken: string) {
+  const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}/auth`, {
+    headers: {
+      'Content-type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'openid',
+      code: keycloakToken,
+      url: document.location.href,
+    }),
+  })
+  if (!response.ok) {
+    const result = await response.json()
+    throw new Error(result.message)
+  }
+  return response.json()
+}
 
 const signinCallback = async (_user: User | void): Promise<void> => {
-  async function login(keycloakToken: string) {
-    const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}/auth`, {
-      headers: {
-        'Content-type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'openid',
-        code: keycloakToken,
-        url: document.location.href,
-      }),
-    })
-    if (!response.ok) {
-      const result = await response.json()
-      throw new Error(result.message)
-    }
-    return response.json()
-  }
-
   const searchParams = new URLSearchParams(window.location.search)
   const code = searchParams.get('code')!
   console.log('code', {code})
@@ -73,6 +72,7 @@ createRoot(document.getElementById('root')!).render(
       redirect_uri={window.location.href}
       onSigninCallback={signinCallback}
       userStore={userStoreProp}
+      skipSigninCallback
     >
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
