@@ -1,4 +1,4 @@
-import Keycloak, {KeycloakAdapter} from 'keycloak-js'
+import Keycloak from 'keycloak-js'
 import {Issue, Project, SearchResults, Task, User, UserStory} from '../../types/taiga.ts'
 
 async function login(keycloakToken: string) {
