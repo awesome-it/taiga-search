@@ -36,6 +36,7 @@ const keycloak = new Keycloak({
 keycloak
   .init({
     onLoad: 'login-required',
+    pkceMethod: 'S256',
     enableLogging: true,
     // flow: 'hybrid',
     // scope: 'openid email',
