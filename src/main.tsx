@@ -70,7 +70,7 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider
       authority={`${import.meta.env.VITE_KEYCLOAK_URL}/realms/${import.meta.env.VITE_KEYCLOAK_REALM}`}
       client_id={import.meta.env.VITE_KEYCLOAK_CLIENTID}
-      redirect_uri={window.location.origin}
+      redirect_uri={window.location.href}
       onSigninCallback={signinCallback}
       userStore={userStoreProp}
     >
