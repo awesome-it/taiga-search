@@ -23,7 +23,7 @@ function Signin() {
         body: JSON.stringify({
           type: 'openid',
           code: keycloakToken,
-          url: document.location.href,
+          url: document.location.origin + document.location.pathname,
         }),
       })
       if (!response.ok) {
