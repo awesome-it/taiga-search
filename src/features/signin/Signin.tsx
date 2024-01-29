@@ -33,6 +33,8 @@ function Signin() {
       return response.json()
     }
     const searchParams = new URLSearchParams(window.location.search)
+
+    console.log('Login', {searchParams})
     const code = searchParams.get('code')
 
     if (code) {
