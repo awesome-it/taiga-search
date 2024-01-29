@@ -72,6 +72,7 @@ createRoot(document.getElementById('root')!).render(
       redirect_uri={window.location.origin + window.location.pathname}
       onSigninCallback={signinCallback}
       userStore={userStoreProp}
+      scope="openid email"
       skipSigninCallback
     >
       <QueryClientProvider client={queryClient}>
