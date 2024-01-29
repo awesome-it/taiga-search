@@ -3,14 +3,34 @@ import {useQuery} from '@tanstack/react-query'
 import {useParams} from 'react-router-dom'
 import {Card, CardContent, CardHeader, Container} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+// import {hasAuthParams, useAuth} from 'react-oidc-context'
+// import {useEffect, useState} from 'react'
 import {projectQuery, useAllTicketsQueries, userQuery, useSearchQueries} from './features/queries/queries.ts'
 import SearchForm from './features/search/SearchForm.tsx'
 import SearchResults from './features/search/SearchResults.tsx'
 import TicketList from './features/widgets/TicketList.tsx'
 
 function App() {
+  // const auth = useAuth()
   const {searchTerm} = useParams()
+  // const [hasTriedSignin, setHasTriedSignin] = useState(false)
 
+  // useEffect(() => {
+  //   if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
+  //     auth.signinRedirect()
+  //     setHasTriedSignin(true)
+  //   }
+  // }, [auth, hasTriedSignin])
+  //
+  // if (auth.isLoading) {
+  //   return <div>Loading...</div>
+  // }
+  //
+  // if (auth.error) {
+  //   return <div>Oops... {auth.error.message}</div>
+  // }
+  //
+  // if (auth.isAuthenticated) {
   const {data: user} = useQuery(userQuery)
   const {data: projects} = useQuery(projectQuery)
   const {data: searchResult} = useSearchQueries(projects, searchTerm)
@@ -80,6 +100,7 @@ function App() {
       </Grid>
     </Container>
   )
+  // }
 }
 
 export default App
