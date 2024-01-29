@@ -73,6 +73,7 @@ createRoot(document.getElementById('root')!).render(
       onSigninCallback={signinCallback}
       userStore={userStoreProp}
       scope="openid email"
+      disablePKCE
       skipSigninCallback
     >
       <QueryClientProvider client={queryClient}>
