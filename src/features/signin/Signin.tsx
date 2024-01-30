@@ -33,24 +33,28 @@ function Signin() {
       return response.json()
     }
     const searchParams = new URLSearchParams(window.location.search)
-
-    console.log('Login', {searchParams})
     const code = searchParams.get('code')
 
     if (code) {
       login(code)
         .then(result => {
           console.log('Result', {result})
+          console.log('User', auth.user)
+          window.localStorage.setItem('auth-token', result.auth_token)
+          window.localStorage.setItem('refresh-token', result.refresh)
+          auth.isAuthenticated = true
         })
         .catch(error => {
           console.log('Error', {error})
         })
-      // TODO: when ready re-add finally
-      // .finally(() => {
-      //   window.history.replaceState({}, document.title, window.location.pathname)
-      // })
+        .finally(() => {
+          window.history.replaceState({}, document.title, window.location.pathname)
+        })
     }
-  }, [])
+  }, [auth])
+
+  console.log('Auth', {auth})
+  console.log('Authenticated', auth.isAuthenticated)
 
   if (auth.isLoading) {
     return <div>Loading...</div>
