@@ -41,12 +41,10 @@ import {Issue, Project, SearchResults, Task, User, UserStory} from '../../types/
 //     console.warn('Keycloak init', {error})
 //   })
 
-const token = 'asdasd'
-
 async function fetchWithPath(path: string) {
   const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}${path}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${window.localStorage.getItem('auth-token')}`,
     },
   })
   if (!response.ok) {

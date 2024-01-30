@@ -5,7 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {AuthProvider} from 'react-oidc-context'
-import {User, WebStorageStateStore} from 'oidc-client-ts'
+import {WebStorageStateStore} from 'oidc-client-ts'
 // import App from './App.tsx'
 import Signin from './features/signin/Signin.tsx'
 
@@ -44,25 +44,21 @@ async function login(keycloakToken: string) {
   return response.json()
 }
 
-const signinCallback = async (_user: User | void): Promise<void> => {
+const userStoreProp = new WebStorageStateStore({store: window.localStorage})
+const signinCallback = async (): Promise<void> => {
   const searchParams = new URLSearchParams(window.location.search)
   const code = searchParams.get('code')!
-  console.log('code', {code})
+
   window.history.replaceState({}, document.title, window.location.pathname)
-  const user = await login(code)
+  await login(code)
     .then(result => {
       console.log('Result', {result})
+      userStoreProp.set('auth-token', result.auth_token)
     })
     .catch(error => {
       console.log('Error', {error})
     })
-
-  console.log('LoggedIn', {user})
-
-  console.log('User', {_user})
 }
-
-const userStoreProp = new WebStorageStateStore({store: window.localStorage})
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
