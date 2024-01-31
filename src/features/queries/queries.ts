@@ -21,8 +21,8 @@ export const useAllTicketsQueries = () => {
         queryFn: getAllUserStories,
         select: (data: UserStory[]) => {
           return data.map(ticket => {
-            ticket.ticketType = 'UserStory'
-            ticket.path = `/project/${ticket.project_extra_info.slug}/us/${ticket.id}`
+            ticket.ticketType = 'us'
+            ticket.path = `/project/${ticket.project_extra_info.slug}/us/${ticket.ref}`
             return ticket
           })
         },
@@ -32,8 +32,8 @@ export const useAllTicketsQueries = () => {
         queryFn: getAllTasks,
         select: (data: Task[]) => {
           return data.map(ticket => {
-            ticket.ticketType = 'Task'
-            ticket.path = `/project/${ticket.project_extra_info.slug}/task/${ticket.id}`
+            ticket.ticketType = 'task'
+            ticket.path = `/project/${ticket.project_extra_info.slug}/task/${ticket.ref}`
             return ticket
           })
         },
@@ -43,8 +43,8 @@ export const useAllTicketsQueries = () => {
         queryFn: getAllIssues,
         select: (data: Issue[]) => {
           return data.map(ticket => {
-            ticket.ticketType = 'Issue'
-            ticket.path = `/project/${ticket.project_extra_info.slug}/issue/${ticket.id}`
+            ticket.ticketType = 'issue'
+            ticket.path = `/project/${ticket.project_extra_info.slug}/issue/${ticket.ref}`
             return ticket
           })
         },

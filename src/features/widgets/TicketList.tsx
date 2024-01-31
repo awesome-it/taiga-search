@@ -10,7 +10,7 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
         maxHeight: '90%',
       }}
     >
-      {tickets.map(ticket => (
+      {tickets.map((ticket, index) => (
         <Fragment key={ticket.path}>
           <ListItem disablePadding alignItems="flex-start">
             <ListItemButton component="a" href={ticket.path} alignItems="flex-start">
@@ -23,8 +23,10 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                 primary={
                   <>
                     <span>
-                      {ticket.project_extra_info.name} / {ticket.ticketType} / {ticket.subject}
+                      {ticket.project_extra_info.name} / {ticket.ticketType} / {ticket.ref}
                     </span>
+                    <br />
+                    <span>{ticket.subject}</span>
                     {showDueDate && (
                       <>
                         <br />
@@ -38,16 +40,15 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                     <span>{ticket.status_extra_info.name}</span>
                     <br />
                     <span>
-                      {ticket.assigned_to_extra_info?.full_name_display
-                        ? `Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`
-                        : 'Unassigned'}
+                      {ticket.assigned_to_extra_info?.full_name_display &&
+                        `Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
                     </span>
                   </>
                 }
               />
             </ListItemButton>
           </ListItem>
-          <Divider />
+          {index + 1 < tickets.length && <Divider />}
         </Fragment>
       ))}
     </List>
