@@ -29,6 +29,7 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                   <Avatar
                     sx={{
                       bgcolor: ticket.status_extra_info.color,
+                      color: theme.palette.getContrastText(ticket.status_extra_info.color),
                     }}
                     src={ticket.project_extra_info.logo_small_url}
                   >
