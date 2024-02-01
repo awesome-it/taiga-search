@@ -13,7 +13,11 @@ const useApi = () => {
     })
     if (!response.ok) {
       const result = await response.json()
-      throw new Error(result.message)
+      if (result.code === 'token_not_valid') {
+        // Try to obtain new auth-token
+        await auth.signinSilent()
+      }
+      throw new Error(result.detail)
     }
     return response.json()
   }
@@ -33,8 +37,8 @@ const useApi = () => {
     if (!!response.headers.get('X-Pagination-Next') && response.headers.get('X-Pagination-Current') != null) {
       nextPage = parseInt(response.headers.get('X-Pagination-Current')!, 10) + 1
     }
-    console.log('Next pagination', response.headers.get('X-Pagination-Next'))
-    console.log('Next page', nextPage)
+    // console.log('Next pagination', response.headers.get('X-Pagination-Next'))
+    // console.log('Next page', nextPage)
     const data = await response.json()
     return {data, nextPage} as {data: UserStory[]; nextPage: number}
   }
