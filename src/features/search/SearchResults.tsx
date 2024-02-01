@@ -32,7 +32,7 @@ function SearchResults({results}: {results: SearchResult}) {
                   <ListItemButton component="a" href={item.path}>
                     {/* <ListItemAvatar>{item.status}</ListItemAvatar> */}
                     <ListItemText
-                      primary={`${projects.find(project => project.id === item.projectId)!.name} / ${SearchResultMap.get(key)} / ${item.id}`}
+                      primary={`${projects.find(project => project.id === item.projectId)!.name} / ${SearchResultMap.get(key)} / ${item.ref}`}
                       secondary={item.subject}
                     />
                   </ListItemButton>

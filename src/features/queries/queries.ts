@@ -105,22 +105,22 @@ export const useSearchQueries = (projects: Project[] | undefined, searchTerm: st
               queryFn: () => searchProjects(project.id),
               select: (data: SearchResults) => {
                 data.epics.map(epic => {
-                  epic.path = `/project/${project.slug}/epic/${epic.id}`
+                  epic.path = `/project/${project.slug}/epic/${epic.ref}`
                   epic.projectId = project.id
                   return epic
                 })
                 data.userstories.map(userstory => {
-                  userstory.path = `/project/${project.slug}/us/${userstory.id}`
+                  userstory.path = `/project/${project.slug}/us/${userstory.ref}`
                   userstory.projectId = project.id
                   return userstory
                 })
                 data.issues.map(issue => {
-                  issue.path = `/project/${project.slug}/issue/${issue.id}`
+                  issue.path = `/project/${project.slug}/issue/${issue.ref}`
                   issue.projectId = project.id
                   return issue
                 })
                 data.tasks.map(task => {
-                  task.path = `/project/${project.slug}/task/${task.id}`
+                  task.path = `/project/${project.slug}/task/${task.ref}`
                   task.projectId = project.id
                   return task
                 })
