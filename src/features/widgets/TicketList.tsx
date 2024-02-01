@@ -6,18 +6,14 @@ import {
   CardContent,
   CardHeader,
   Chip,
-  // List,
-  // ListItem,
-  // ListItemAvatar,
-  // ListItemButton,
-  // ListItemText,
   Typography,
+  useTheme,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-// import {Fragment} from 'react'
 import {Issue, Task, UserStory} from '../../types/taiga.ts'
 
 function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue | Task)[]; showDueDate?: boolean}) {
+  const theme = useTheme()
   if (tickets.length === 0) {
     return <Typography>Currently no tickets</Typography>
   }
@@ -34,6 +30,7 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                     sx={{
                       bgcolor: ticket.status_extra_info.color,
                     }}
+                    src={ticket.project_extra_info.logo_small_url}
                   >
                     {ticket.status_extra_info.name[0]}
                   </Avatar>
@@ -59,6 +56,7 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                   label={`${ticket.status_extra_info.name}`}
                   sx={{
                     bgcolor: ticket.status_extra_info.color,
+                    color: theme.palette.getContrastText(ticket.status_extra_info.color),
                   }}
                 />
                 {ticket.assigned_to_extra_info?.full_name_display && (
@@ -76,57 +74,6 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
       ))}
     </Grid>
   )
-
-  // return (
-  //   <List
-  //     disablePadding
-  //     sx={{
-  //       maxHeight: '90%',
-  //     }}
-  //   >
-  //     {tickets.map((ticket, index) => (
-  //       <Fragment key={ticket.path}>
-  //         <ListItem disablePadding alignItems="flex-start">
-  //           <ListItemButton component="a" href={ticket.path} alignItems="flex-start">
-  //             <ListItemAvatar>
-  //               <Avatar sx={{bgcolor: ticket.status_extra_info.color}} src={ticket.assigned_to_extra_info?.photo}>
-  //                 {ticket.status_extra_info.name[0]}
-  //               </Avatar>
-  //             </ListItemAvatar>
-  //             <ListItemText
-  //               primary={
-  //                 <>
-  //                   <span>
-  //                     {ticket.project_extra_info.name} / {ticket.ticketType} / {ticket.ref}
-  //                   </span>
-  //                   <br />
-  //                   <span>{ticket.subject}</span>
-  //                   {showDueDate && (
-  //                     <>
-  //                       <br />
-  //                       <span>Due: {ticket.due_date}</span>
-  //                     </>
-  //                   )}
-  //                 </>
-  //               }
-  //               secondary={
-  //                 <>
-  //                   <span>{ticket.status_extra_info.name}</span>
-  //                   <br />
-  //                   <span>
-  //                     {ticket.assigned_to_extra_info?.full_name_display &&
-  //                       `Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
-  //                   </span>
-  //                 </>
-  //               }
-  //             />
-  //           </ListItemButton>
-  //         </ListItem>
-  //         {index + 1 < tickets.length && <Divider />}
-  //       </Fragment>
-  //     ))}
-  //   </List>
-  // )
 }
 
 export default TicketList
