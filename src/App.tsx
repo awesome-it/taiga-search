@@ -1,16 +1,19 @@
 import './App.css'
 import {useParams} from 'react-router-dom'
-import {Card, CardContent, CardHeader, Container} from '@mui/material'
+import {Container, Tab, useMediaQuery, useTheme} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import {SyntheticEvent, useState} from 'react'
+import {TabContext, TabList, TabPanel} from '@mui/lab'
 import useTaigaQueries from './features/queries/queries.ts'
 import SearchForm from './features/search/SearchForm.tsx'
 import SearchResults from './features/search/SearchResults.tsx'
-import TicketList from './features/widgets/TicketList.tsx'
+import TicketWidget from './features/widgets/TicketWidget.tsx'
 
 function App() {
-  // const auth = useAuth()
   const {searchTerm} = useParams()
   const taigaQueries = useTaigaQueries()
+  const theme = useTheme()
+  const smallView = useMediaQuery(theme.breakpoints.down('md'))
 
   const {data: user} = taigaQueries.useUserQuery()
   const {data: projects} = taigaQueries.useProjectQuery()
@@ -18,14 +21,20 @@ function App() {
   // const {data: allUserStories} = taigaQueries.useAllTicketsQueriesPaginated()
   const {data: allTickets} = taigaQueries.useAllTicketsQueries()
 
+  const [currentTab, setCurrentTab] = useState('1')
+
+  const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue)
+  }
+
   // console.log('All userstories', {allUserStories})
 
   return (
     <Container
       sx={{
-        width: {
-          xs: '90vw',
-          sm: '75vw',
+        maxWidth: {
+          xs: '100vw',
+          sm: '100vw',
         },
       }}
     >
@@ -40,51 +49,69 @@ function App() {
           </Grid>
         )}
 
-        {user && allTickets && !searchTerm && (
+        {user && allTickets && !searchTerm && !smallView && (
           <>
-            <Grid xs={12} md={6} lg={3}>
-              <Card>
-                <CardHeader title="My Tickets" />
-                <CardContent>
-                  <TicketList tickets={allTickets.filter(ticket => ticket.assigned_to === user.id)} />
-                </CardContent>
-              </Card>
+            <Grid xs={12} md={6}>
+              <TicketWidget
+                tickets={allTickets.filter(ticket => ticket.assigned_to === user.id)}
+                title="My Tickets"
+                style={{height: '35vh'}}
+              />
             </Grid>
-            <Grid xs={12} md={6} lg={3}>
-              <Card>
-                <CardHeader title="Watched Tickets" />
-                <CardContent>
-                  <TicketList tickets={allTickets.filter(ticket => ticket.is_watcher)} />
-                </CardContent>
-              </Card>
+            <Grid xs={12} md={6}>
+              <TicketWidget
+                tickets={allTickets.filter(ticket => ticket.is_watcher)}
+                title="Watched Tickets"
+                style={{height: '35vh'}}
+              />
             </Grid>
-            <Grid xs={12} md={6} lg={3}>
-              <Card>
-                <CardHeader title="Unassigned Tickets" />
-                <CardContent>
-                  <TicketList tickets={allTickets.filter(ticket => !ticket.assigned_to)} />
-                </CardContent>
-              </Card>
+            <Grid xs={12} md={6}>
+              <TicketWidget
+                tickets={allTickets.filter(ticket => !ticket.assigned_to)}
+                title="Unassigned Tickets"
+                style={{maxHeight: '35vh'}}
+              />
             </Grid>
-            <Grid xs={12} md={6} lg={3}>
-              <Card>
-                <CardHeader title="Tickets w/ Deadline" />
-                <CardContent>
-                  <TicketList
-                    showDueDate
-                    tickets={allTickets
-                      .filter(ticket => ticket.due_date)
-                      .sort((a, b) => (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0))}
-                  />
-                </CardContent>
-              </Card>
+            <Grid xs={12} md={6}>
+              <TicketWidget
+                tickets={allTickets
+                  .filter(ticket => ticket.due_date)
+                  .sort((a, b) => (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0))}
+                title="Tickets w/ Deadline"
+                style={{maxHeight: '35vh'}}
+              />
             </Grid>
           </>
+        )}
+        {user && allTickets && !searchTerm && smallView && (
+          <TabContext value={currentTab}>
+            <TabList onChange={handleTabChange} variant="scrollable" allowScrollButtonsMobile>
+              <Tab label="My Tickets" value="1" />
+              <Tab label="Watched Tickets" value="2" />
+              <Tab label="Unassigned Tickets" value="3" />
+              <Tab label="Tickets w/ Deadline" value="4" />
+            </TabList>
+            <TabPanel value="1" sx={{p: 0, width: '100%', maxHeight: '75vh', overflow: 'auto'}}>
+              <TicketWidget tickets={allTickets.filter(ticket => ticket.assigned_to === user.id)} />
+            </TabPanel>
+            <TabPanel value="2" sx={{p: 0, width: '100%', maxHeight: '75vh', overflow: 'auto'}}>
+              <TicketWidget tickets={allTickets.filter(ticket => ticket.is_watcher)} />
+            </TabPanel>
+            <TabPanel value="3" sx={{p: 0, width: '100%', maxHeight: '75vh', overflow: 'auto'}}>
+              <TicketWidget tickets={allTickets.filter(ticket => !ticket.assigned_to)} />
+            </TabPanel>
+            <TabPanel value="4" sx={{p: 0, width: '100%', maxHeight: '75vh', overflow: 'auto'}}>
+              <TicketWidget
+                tickets={allTickets
+                  .filter(ticket => ticket.due_date)
+                  .sort((a, b) => (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0))}
+              />
+            </TabPanel>
+          </TabContext>
         )}
       </Grid>
     </Container>
   )
-  // }
 }
 
 export default App
