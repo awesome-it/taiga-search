@@ -1,17 +1,17 @@
 import React from 'react'
 import {createRoot} from 'react-dom/client'
-import './index.css'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {AuthProvider} from 'react-oidc-context'
 import {User, UserManager, WebStorageStateStore} from 'oidc-client-ts'
-import Signin from './features/signin/Signin.tsx'
+import {User as TaigaUser} from './types/taiga.ts'
+import SignIn from './features/signin/SignIn.tsx'
 
 class TaigaUserManager extends UserManager {
   protected async _signinEnd(url: string, verifySub?: string): Promise<User> {
     const logger = this._logger.create('_signinEnd')
-    const login = async (keycloakToken: string) => {
+    const login = async (keycloakToken: string): Promise<TaigaUser> => {
       const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}/auth`, {
         headers: {
           'Content-type': 'application/json',
@@ -39,7 +39,6 @@ class TaigaUserManager extends UserManager {
         const result = await login(code)
         response.access_token = result.auth_token
         response.refresh_token = result.refresh
-        window.localStorage.setItem('auth-token', response.access_token)
       } catch (e) {
         logger.debug('Error on taiga login', e)
       }
@@ -53,11 +52,11 @@ const router = createBrowserRouter(
   [
     {
       path: '/',
-      element: <Signin />,
+      element: <SignIn />,
     },
     {
       path: '/:searchTerm',
-      element: <Signin />,
+      element: <SignIn />,
     },
   ],
   {
@@ -68,7 +67,7 @@ const queryClient = new QueryClient()
 
 const userStoreProp = new WebStorageStateStore({store: window.localStorage})
 
-const onSigninCallback = (): void => {
+const signInCallback = (): void => {
   window.history.replaceState({}, document.title, window.location.pathname)
 }
 
@@ -82,7 +81,7 @@ createRoot(document.getElementById('root')!).render(
       scope="openid email"
       implementation={TaigaUserManager}
       disablePKCE
-      onSigninCallback={onSigninCallback}
+      onSigninCallback={signInCallback}
     >
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />

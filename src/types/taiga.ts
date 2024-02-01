@@ -231,6 +231,7 @@ export type SearchResults = {
 
 export type User = {
   accepted_terms: boolean
+  auth_token: string
   big_photo: null
   bio: string
   color: string
@@ -248,6 +249,7 @@ export type User = {
   max_public_projects: null
   photo: null
   read_new_terms: boolean
+  refresh: string
   roles: string[]
   theme: string
   timezone: string

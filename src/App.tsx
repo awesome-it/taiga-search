@@ -1,9 +1,8 @@
 import './App.css'
-import {useQuery} from '@tanstack/react-query'
 import {useParams} from 'react-router-dom'
 import {Card, CardContent, CardHeader, Container} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import {projectQuery, useAllTicketsQueries, userQuery, useSearchQueries} from './features/queries/queries.ts'
+import useTaigaQueries from './features/queries/queries.ts'
 import SearchForm from './features/search/SearchForm.tsx'
 import SearchResults from './features/search/SearchResults.tsx'
 import TicketList from './features/widgets/TicketList.tsx'
@@ -11,11 +10,15 @@ import TicketList from './features/widgets/TicketList.tsx'
 function App() {
   // const auth = useAuth()
   const {searchTerm} = useParams()
+  const taigaQueries = useTaigaQueries()
 
-  const {data: user} = useQuery(userQuery)
-  const {data: projects} = useQuery(projectQuery)
-  const {data: searchResult} = useSearchQueries(projects, searchTerm)
-  const {data: allTickets} = useAllTicketsQueries()
+  const {data: user} = taigaQueries.useUserQuery()
+  const {data: projects} = taigaQueries.useProjectQuery()
+  const {data: searchResult} = taigaQueries.useSearchQueries(projects, searchTerm)
+  // const {data: allUserStories} = taigaQueries.useAllTicketsQueriesPaginated()
+  const {data: allTickets} = taigaQueries.useAllTicketsQueries()
+
+  // console.log('All userstories', {allUserStories})
 
   return (
     <Container
