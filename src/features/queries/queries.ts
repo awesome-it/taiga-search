@@ -1,19 +1,38 @@
-import {useQueries, UseQueryResult} from '@tanstack/react-query'
+import {useInfiniteQuery, useQueries, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {useCallback} from 'react'
-import {getAllIssues, getAllProjects, getAllTasks, getAllUserStories, getUserData, searchProject} from '../api/api.ts'
+import useApi from '../api/api.ts'
 import {Issue, Project, SearchResults, Task, UserStory} from '../../types/taiga.ts'
 import {SearchResult} from '../../types/search.ts'
 
-export const userQuery = {
-  queryKey: ['user'],
-  queryFn: getUserData,
+export const useUserQuery = () => {
+  const {getUserData} = useApi()
+  return useQuery({
+    queryKey: ['user'],
+    queryFn: getUserData,
+  })
 }
-export const projectQuery = {
-  queryKey: ['projects'],
-  queryFn: getAllProjects,
+export const useProjectQuery = () => {
+  const {getAllProjects} = useApi()
+  return useQuery({
+    queryKey: ['projects'],
+    queryFn: getAllProjects,
+  })
+}
+
+export const useAllTicketsQueriesPaginated = () => {
+  const {getAllUserStoriesPaginated} = useApi()
+  return useInfiniteQuery({
+    queryKey: ['userstories'],
+    queryFn: getAllUserStoriesPaginated,
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      return lastPage.nextPage
+    },
+  })
 }
 
 export const useAllTicketsQueries = () => {
+  const {getAllUserStories, getAllTasks, getAllIssues} = useApi()
   return useQueries({
     queries: [
       {
@@ -72,9 +91,10 @@ export const useAllTicketsQueries = () => {
 }
 
 export const useSearchQueries = (projects: Project[] | undefined, searchTerm: string | undefined) => {
+  const {searchProject} = useApi()
   const searchProjects = useCallback(
     (projectId: number): Promise<SearchResults> => searchProject(projectId, searchTerm),
-    [searchTerm],
+    [searchProject, searchTerm],
   )
   return useQueries({
     queries:
@@ -159,3 +179,15 @@ export const useSearchQueries = (projects: Project[] | undefined, searchTerm: st
     },
   })
 }
+
+const useTaigaQueries = () => {
+  return {
+    useUserQuery,
+    useProjectQuery,
+    useAllTicketsQueries,
+    useAllTicketsQueriesPaginated,
+    useSearchQueries,
+  }
+}
+
+export default useTaigaQueries

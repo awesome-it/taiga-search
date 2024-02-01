@@ -1,6 +1,7 @@
 import {Divider, Link, List, ListItem, ListItemButton, ListItemText, Typography} from '@mui/material'
 import {useQueryClient} from '@tanstack/react-query'
-import {useParams} from 'react-router-dom'
+import {Link as RouterLink, useParams} from 'react-router-dom'
+import {Fragment} from 'react'
 import {SearchResult, SearchResultMap} from '../../types/search.ts'
 import {Project} from '../../types/taiga.ts'
 
@@ -13,7 +14,9 @@ function SearchResults({results}: {results: SearchResult}) {
     return (
       <Typography>
         Sorry! There are no results for &quot;{searchTerm}&quot; <br />
-        <Link href="/">Return to dashboard</Link>
+        <Link component={RouterLink} to="/" reloadDocument>
+          Return to dashboard
+        </Link>
       </Typography>
     )
   }
@@ -24,8 +27,8 @@ function SearchResults({results}: {results: SearchResult}) {
           item =>
             projects &&
             projects.find(project => project.id === item.projectId) && (
-              <>
-                <ListItem disablePadding key={item.path}>
+              <Fragment key={item.path}>
+                <ListItem disablePadding>
                   <ListItemButton component="a" href={item.path}>
                     {/* <ListItemAvatar>{item.status}</ListItemAvatar> */}
                     <ListItemText
@@ -35,10 +38,15 @@ function SearchResults({results}: {results: SearchResult}) {
                   </ListItemButton>
                 </ListItem>
                 <Divider />
-              </>
+              </Fragment>
             ),
         ),
       )}
+      <ListItem key="dashboardBacklink" disablePadding>
+        <ListItemButton component={RouterLink} to="/" reloadDocument>
+          <ListItemText primary="Return to dashboard" />
+        </ListItemButton>
+      </ListItem>
     </List>
   )
 }

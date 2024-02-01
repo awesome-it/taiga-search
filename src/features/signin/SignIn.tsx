@@ -2,16 +2,16 @@ import {hasAuthParams, useAuth} from 'react-oidc-context'
 import {useEffect, useState} from 'react'
 import App from '../../App.tsx'
 
-function Signin() {
+function SignIn() {
   const auth = useAuth()
 
-  const [hasTriedSignin, setHasTriedSignin] = useState(false)
+  const [hasTriedSignIn, setHasTriedSignIn] = useState(false)
   useEffect(() => {
-    if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignin) {
+    if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignIn) {
       auth.signinRedirect()
-      setHasTriedSignin(true)
+      setHasTriedSignIn(true)
     }
-  }, [auth, hasTriedSignin])
+  }, [auth, hasTriedSignIn])
 
   if (auth.isLoading) {
     return <div>Loading...</div>
@@ -26,4 +26,4 @@ function Signin() {
   }
 }
 
-export default Signin
+export default SignIn
