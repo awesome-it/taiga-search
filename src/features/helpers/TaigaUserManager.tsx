@@ -32,6 +32,8 @@ class TaigaUserManager extends UserManager {
         const result = await login(code)
         response.access_token = result.auth_token
         response.refresh_token = result.refresh
+        const [, payload] = result.auth_token.split('.')
+        response.expires_at = JSON.parse(atob(payload)).exp
       } catch (e) {
         logger.debug('Error on taiga login', e)
       }
@@ -66,6 +68,8 @@ class TaigaUserManager extends UserManager {
       const result = await refreshAuthToken(refresh_token)
       response.access_token = result.auth_token
       response.refresh_token = result.refresh
+      const [, payload] = result.auth_token.split('.')
+      response.expires_at = JSON.parse(atob(payload)).exp
     } catch (e) {
       logger.debug('Error on taiga token refresh', e)
     }

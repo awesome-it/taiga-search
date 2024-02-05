@@ -6,6 +6,19 @@ function SignIn() {
   const auth = useAuth()
 
   const [hasTriedSignIn, setHasTriedSignIn] = useState(false)
+
+  useEffect(() => {
+    return auth.events.addAccessTokenExpiring(() => {
+      auth.signinSilent()
+    })
+  }, [auth])
+
+  useEffect(() => {
+    return auth.events.addAccessTokenExpired(() => {
+      auth.signinSilent()
+    })
+  }, [auth])
+
   useEffect(() => {
     if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading && !hasTriedSignIn) {
       auth.signinRedirect()
