@@ -57,7 +57,7 @@ function App() {
                   .filter(ticket => ticket.assigned_to === user.id)
                   .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="My Tickets"
-                style={{height: '35vh'}}
+                style={{height: '38vh'}}
               />
             </Grid>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
@@ -66,7 +66,7 @@ function App() {
                   .filter(ticket => ticket.is_watcher)
                   .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="Watched Tickets"
-                style={{height: '35vh'}}
+                style={{height: '38vh'}}
               />
             </Grid>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
@@ -75,7 +75,7 @@ function App() {
                   .filter(ticket => !ticket.assigned_to)
                   .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="Unassigned Tickets"
-                style={{maxHeight: '35vh'}}
+                style={{maxHeight: '38vh'}}
               />
             </Grid>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
@@ -84,7 +84,7 @@ function App() {
                   .filter(ticket => ticket.due_date)
                   .sort((a, b) => (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0))}
                 title="Tickets w/ Deadline"
-                style={{maxHeight: '35vh'}}
+                style={{maxHeight: '38vh'}}
               />
             </Grid>
           </>
