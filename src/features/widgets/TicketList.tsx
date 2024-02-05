@@ -23,7 +23,7 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
     <Grid container flexDirection="column">
       {tickets.map(ticket => (
         <Grid xs={12} key={ticket.path}>
-          <Card>
+          <Card elevation={0}>
             <CardActionArea component="a" href={ticket.path}>
               <CardHeader
                 avatar={

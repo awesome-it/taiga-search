@@ -18,8 +18,16 @@ function TicketWidget({
       {title && (
         <CardHeader
           title={title}
-          titleTypographyProps={{fontSize: '1rem'}}
-          sx={{py: 0, px: '0.5rem', position: 'absolute', top: 0, left: '1rem', backgroundColor: 'white'}}
+          titleTypographyProps={{fontSize: '1rem', color: 'text.secondary'}}
+          sx={{
+            py: 0,
+            px: 1,
+            position: 'absolute',
+            top: 0,
+            left: '1rem',
+            backgroundColor: 'white',
+            transform: 'scale(0.75)',
+          }}
         />
       )}
       <CardContent
