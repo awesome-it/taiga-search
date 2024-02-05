@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   Chip,
+  Divider,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -15,14 +16,14 @@ import {Issue, Task, UserStory} from '../../types/taiga.ts'
 function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue | Task)[]; showDueDate?: boolean}) {
   const theme = useTheme()
   if (tickets.length === 0) {
-    return <Typography>Currently no tickets</Typography>
+    return <Typography sx={{p: 2}}>Currently no tickets</Typography>
   }
 
   return (
     <Grid container flexDirection="column">
       {tickets.map(ticket => (
         <Grid xs={12} key={ticket.path}>
-          <Card variant="outlined">
+          <Card>
             <CardActionArea component="a" href={ticket.path}>
               <CardHeader
                 avatar={
@@ -52,7 +53,15 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                 }}
               />
               {showDueDate && <CardContent>Due: {ticket.due_date}</CardContent>}
-              <CardActions disableSpacing>
+              <CardActions disableSpacing sx={{justifyContent: 'end'}}>
+                {ticket.assigned_to_extra_info?.full_name_display && (
+                  <Chip
+                    label={`Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
+                    sx={{
+                      marginRight: 2,
+                    }}
+                  />
+                )}
                 <Chip
                   label={`${ticket.status_extra_info.name}`}
                   sx={{
@@ -60,17 +69,10 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                     color: theme.palette.getContrastText(ticket.status_extra_info.color),
                   }}
                 />
-                {ticket.assigned_to_extra_info?.full_name_display && (
-                  <Chip
-                    label={`Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
-                    sx={{
-                      marginLeft: 'auto',
-                    }}
-                  />
-                )}
               </CardActions>
             </CardActionArea>
           </Card>
+          <Divider />
         </Grid>
       ))}
     </Grid>

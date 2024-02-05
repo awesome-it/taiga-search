@@ -22,6 +22,7 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
       <TextField
         name="searchTerm"
         fullWidth
+        autoFocus
         value={searchInput}
         label="Search"
         onChange={onChangeHandler}
