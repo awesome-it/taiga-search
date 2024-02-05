@@ -51,28 +51,34 @@ function App() {
 
         {user && allTickets && !searchTerm && !smallView && (
           <>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets.filter(ticket => ticket.assigned_to === user.id)}
+                tickets={allTickets
+                  .filter(ticket => ticket.assigned_to === user.id)
+                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="My Tickets"
                 style={{height: '35vh'}}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets.filter(ticket => ticket.is_watcher)}
+                tickets={allTickets
+                  .filter(ticket => ticket.is_watcher)
+                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="Watched Tickets"
                 style={{height: '35vh'}}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets.filter(ticket => !ticket.assigned_to)}
+                tickets={allTickets
+                  .filter(ticket => !ticket.assigned_to)
+                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
                 title="Unassigned Tickets"
                 style={{maxHeight: '35vh'}}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
                 tickets={allTickets
                   .filter(ticket => ticket.due_date)

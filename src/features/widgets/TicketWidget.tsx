@@ -14,11 +14,18 @@ function TicketWidget({
   style?: object
 }) {
   return (
-    <Card>
-      {title && <CardHeader title={title} />}
+    <Card variant="outlined">
+      {title && (
+        <CardHeader
+          title={title}
+          titleTypographyProps={{fontSize: '1rem'}}
+          sx={{py: 0, px: '0.5rem', position: 'absolute', top: 0, left: '1rem', backgroundColor: 'white'}}
+        />
+      )}
       <CardContent
         sx={{
           overflow: 'auto',
+          px: 0,
           ...style,
         }}
       >
