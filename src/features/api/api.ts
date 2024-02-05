@@ -13,10 +13,6 @@ const useApi = () => {
     })
     if (!response.ok) {
       const result = await response.json()
-      if (result.code === 'token_not_valid') {
-        // Try to obtain new auth-token
-        await auth.signinSilent()
-      }
       throw new Error(result.detail)
     }
     return response.json()

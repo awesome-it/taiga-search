@@ -2,16 +2,14 @@ import './App.css'
 import {useParams} from 'react-router-dom'
 import {Container, Tab, useMediaQuery, useTheme} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import {SyntheticEvent, useEffect, useState} from 'react'
+import {SyntheticEvent, useState} from 'react'
 import {TabContext, TabList, TabPanel} from '@mui/lab'
-import {useAuth} from 'react-oidc-context'
 import useTaigaQueries from './features/queries/queries.ts'
 import SearchForm from './features/search/SearchForm.tsx'
 import SearchResults from './features/search/SearchResults.tsx'
 import TicketWidget from './features/widgets/TicketWidget.tsx'
 
 function App() {
-  const auth = useAuth()
   const {searchTerm} = useParams()
   const taigaQueries = useTaigaQueries()
   const theme = useTheme()
@@ -28,18 +26,6 @@ function App() {
   const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue)
   }
-
-  useEffect(() => {
-    return auth.events.addAccessTokenExpiring(() => {
-      auth.signinSilent()
-    })
-  }, [auth])
-
-  useEffect(() => {
-    return auth.events.addAccessTokenExpired(() => {
-      auth.signinSilent()
-    })
-  }, [auth])
 
   // console.log('All userstories', {allUserStories})
 
