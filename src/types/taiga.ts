@@ -1,4 +1,7 @@
 export type Project = {
+  isProject: true // Custom Property
+  ticketType: string // Custom Property
+  path: string // Custom Property
   anon_permissions: string[]
   blocked_code: null
   created_date: string
@@ -28,7 +31,7 @@ export type Project = {
   is_watcher: boolean
   is_wiki_activated: boolean
   logo_big_url: string | null
-  logo_small_url: string | null
+  logo_small_url: string
   looking_for_people_note: string
   members: number[]
   modified_date: string

@@ -52,6 +52,7 @@ const useApi = () => {
     getAllIssues: async (): Promise<Issue[]> => useFetchWithPath('/issues?status__is_closed=false'),
     getAllProjects: async (): Promise<Project[]> => useFetchWithPath('/projects'),
     searchIssues: async (searchTerm: string): Promise<Issue[]> => useFetchWithPath(`/issues?q=${searchTerm}`),
+    searchProjects: async (searchTerm: string): Promise<Project[]> => useFetchWithPath(`/projects?q=${searchTerm}`),
     searchTasks: async (searchTerm: string): Promise<Task[]> => useFetchWithPath(`/tasks?q=${searchTerm}`),
     searchUserStories: async (searchTerm: string): Promise<UserStory[]> =>
       useFetchWithPath(`/userstories?q=${searchTerm}`),
