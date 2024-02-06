@@ -51,9 +51,7 @@ function App() {
           <>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets
-                  .filter(ticket => ticket.assigned_to === user.id)
-                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
+                tickets={allTickets.filter(ticket => ticket.assigned_to === user.id)}
                 title="My Tickets"
                 style={{height: '38vh'}}
               />
