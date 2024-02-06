@@ -42,7 +42,7 @@ const useApi = () => {
   return {
     getUserData: async (): Promise<User> => useFetchWithPath('/users/me'),
     getAllUserStories: async (): Promise<UserStory[]> =>
-      useFetchWithPath("/userstories?status__is_archived=false&status__is_closed=false'"),
+      useFetchWithPath('/userstories?status__is_archived=false&status__is_closed=false'),
     getAllUserStoriesPaginated: async ({
       pageParam,
     }: {
