@@ -1,16 +1,19 @@
-import {Divider, Link, List, ListItem, ListItemButton, ListItemText, Typography} from '@mui/material'
-import {useQueryClient} from '@tanstack/react-query'
+import {Link, Typography} from '@mui/material'
 import {Link as RouterLink, useParams} from 'react-router-dom'
-import {Fragment} from 'react'
-import {SearchResult, SearchResultMap} from '../../types/search.ts'
-import {Project} from '../../types/taiga.ts'
+import useTaigaQueries from '../queries/queries.ts'
+import TicketWidget from '../widgets/TicketWidget.tsx'
 
-function SearchResults({results}: {results: SearchResult}) {
+function SearchResults() {
   const {searchTerm} = useParams()
-  const queryClient = useQueryClient()
-  const projects: Project[] | undefined = queryClient.getQueryData(['projects'])
 
-  if ((Object.keys(results) as Array<keyof SearchResult>).every(key => results[key].length === 0)) {
+  const taigaQueries = useTaigaQueries()
+  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(searchTerm!)
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>
+  }
+
+  if (allTickets && allTickets.length === 0) {
     return (
       <Typography>
         Sorry! There are no results for &quot;{searchTerm}&quot; <br />
@@ -20,35 +23,7 @@ function SearchResults({results}: {results: SearchResult}) {
       </Typography>
     )
   }
-  return (
-    <List>
-      {(Object.keys(results) as Array<keyof SearchResult>).map(key =>
-        results[key].map(
-          item =>
-            projects &&
-            projects.find(project => project.id === item.projectId) && (
-              <Fragment key={item.path}>
-                <ListItem disablePadding>
-                  <ListItemButton component="a" href={item.path}>
-                    {/* <ListItemAvatar>{item.status}</ListItemAvatar> */}
-                    <ListItemText
-                      primary={`${projects.find(project => project.id === item.projectId)!.name} / ${SearchResultMap.get(key)} / ${item.ref}`}
-                      secondary={item.subject}
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <Divider />
-              </Fragment>
-            ),
-        ),
-      )}
-      <ListItem key="dashboardBacklink" disablePadding>
-        <ListItemButton component={RouterLink} to="/" reloadDocument>
-          <ListItemText primary="Return to dashboard" />
-        </ListItemButton>
-      </ListItem>
-    </List>
-  )
+  return <TicketWidget tickets={allTickets} title={`Results for ${searchTerm}`} style={{height: '82vh'}} />
 }
 
 export default SearchResults

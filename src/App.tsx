@@ -16,8 +16,6 @@ function App() {
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
 
   const {data: user} = taigaQueries.useUserQuery()
-  const {data: projects} = taigaQueries.useProjectQuery()
-  const {data: searchResult} = taigaQueries.useSearchQueries(projects, searchTerm)
   // const {data: allUserStories} = taigaQueries.useAllTicketsQueriesPaginated()
   const {data: allTickets} = taigaQueries.useAllTicketsQueries()
 
@@ -43,9 +41,9 @@ function App() {
           <SearchForm searchTerm={searchTerm ?? ''} />
         </Grid>
 
-        {searchResult && searchTerm && (
-          <Grid xs={12}>
-            <SearchResults results={searchResult} />
+        {searchTerm && (
+          <Grid xs={12} sx={{position: 'relative'}}>
+            <SearchResults />
           </Grid>
         )}
 
@@ -62,18 +60,14 @@ function App() {
             </Grid>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets
-                  .filter(ticket => ticket.is_watcher)
-                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
+                tickets={allTickets.filter(ticket => ticket.is_watcher)}
                 title="Watched Tickets"
                 style={{height: '38vh'}}
               />
             </Grid>
             <Grid xs={12} md={6} sx={{position: 'relative'}}>
               <TicketWidget
-                tickets={allTickets
-                  .filter(ticket => !ticket.assigned_to)
-                  .sort((a, b) => (a.modified_date < b.modified_date ? -1 : a.modified_date > b.modified_date ? 1 : 0))}
+                tickets={allTickets.filter(ticket => !ticket.assigned_to)}
                 title="Unassigned Tickets"
                 style={{maxHeight: '38vh'}}
               />
