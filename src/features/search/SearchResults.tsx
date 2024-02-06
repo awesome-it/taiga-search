@@ -23,7 +23,21 @@ function SearchResults() {
       </Typography>
     )
   }
-  return <TicketWidget tickets={allTickets} title={`Results for ${searchTerm}`} style={{height: '82vh'}} />
+  return (
+    <TicketWidget
+      tickets={allTickets.sort((a, b) => {
+        if (a.ticketType === 'project' && b.ticketType !== 'project') {
+          return -1
+        }
+        if (a.ticketType !== 'project' && b.ticketType === 'project') {
+          return 1
+        }
+        return 0
+      })}
+      title={`Results for ${searchTerm}`}
+      style={{height: '82vh'}}
+    />
+  )
 }
 
 export default SearchResults

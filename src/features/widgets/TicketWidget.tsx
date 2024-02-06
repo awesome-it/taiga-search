@@ -1,5 +1,5 @@
 import {Card, CardContent, CardHeader} from '@mui/material'
-import {Issue, Task, UserStory} from '../../types/taiga.ts'
+import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 import TicketList from './TicketList.tsx'
 
 function TicketWidget({
@@ -8,7 +8,7 @@ function TicketWidget({
   showDueDate = false,
   style,
 }: {
-  tickets: (UserStory | Issue | Task)[]
+  tickets: (UserStory | Issue | Task | Project)[]
   title?: string
   showDueDate?: boolean
   style?: object

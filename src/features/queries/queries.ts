@@ -1,7 +1,7 @@
 import {useInfiniteQuery, useQueries, useQuery} from '@tanstack/react-query'
 import {useCallback} from 'react'
 import useApi from '../api/api.ts'
-import {Issue, Task, UserStory} from '../../types/taiga.ts'
+import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 
 export const useUserQuery = () => {
   const {getUserData} = useApi()
@@ -31,8 +31,12 @@ export const useAllTicketsQueriesPaginated = () => {
 }
 
 export const useSearchAllTicketsQueries = (searchTerm: string) => {
-  const {searchIssues, searchTasks, searchUserStories} = useApi()
+  const {searchIssues, searchProjects, searchTasks, searchUserStories} = useApi()
   const doSearchIssues = useCallback((): Promise<Issue[]> => searchIssues(searchTerm), [searchIssues, searchTerm])
+  const doSearchProjects = useCallback(
+    (): Promise<Project[]> => searchProjects(searchTerm),
+    [searchProjects, searchTerm],
+  )
   const doSearchTasks = useCallback((): Promise<Task[]> => searchTasks(searchTerm), [searchTasks, searchTerm])
   const doSearchUserStories = useCallback(
     (): Promise<UserStory[]> => searchUserStories(searchTerm),
@@ -47,6 +51,18 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
           return data.map(ticket => {
             ticket.ticketType = 'issue'
             ticket.path = `/project/${ticket.project_extra_info.slug}/issue/${ticket.ref}`
+            return ticket
+          })
+        },
+      },
+      {
+        queryKey: ['projects', searchTerm],
+        queryFn: doSearchProjects,
+        select: (data: Project[]) => {
+          return data.map(ticket => {
+            ticket.ticketType = 'project'
+            ticket.isProject = true
+            ticket.path = `/project/${ticket.slug}`
             return ticket
           })
         },
@@ -85,7 +101,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
               }
               return a
             },
-            [] as (UserStory | Task | Issue)[],
+            [] as (UserStory | Task | Issue | Project)[],
           ),
         isLoading: results.some(result => result.isLoading),
         isError: results.some(result => result.isError),
