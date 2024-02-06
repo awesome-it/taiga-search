@@ -24,7 +24,11 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
       {tickets.map(ticket => (
         <Grid xs={12} key={ticket.path}>
           <Card elevation={0}>
-            <CardActionArea component="a" href={ticket.path}>
+            <CardActionArea
+              component="a"
+              sx={{[theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'}}}
+              href={ticket.path}
+            >
               <CardHeader
                 avatar={
                   <Avatar
@@ -53,18 +57,20 @@ function TicketList({tickets, showDueDate = false}: {tickets: (UserStory | Issue
                 }}
               />
               {showDueDate && <CardContent>Due: {ticket.due_date}</CardContent>}
-              <CardActions disableSpacing sx={{justifyContent: 'end'}}>
+              <CardActions disableSpacing sx={{justifyContent: 'end', flexWrap: 'wrap'}}>
                 {ticket.assigned_to_extra_info?.full_name_display && (
                   <Chip
                     label={`Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
                     sx={{
-                      marginRight: 2,
+                      mb: 1,
                     }}
                   />
                 )}
                 <Chip
                   label={`${ticket.status_extra_info.name}`}
                   sx={{
+                    ml: 2,
+                    mb: 1,
                     bgcolor: ticket.status_extra_info.color,
                     color: theme.palette.getContrastText(ticket.status_extra_info.color),
                   }}

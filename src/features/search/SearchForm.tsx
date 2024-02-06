@@ -1,6 +1,7 @@
-import {Box, InputAdornment, TextField} from '@mui/material'
+import {Box, IconButton, InputAdornment, TextField} from '@mui/material'
 import {ChangeEvent, FormEventHandler, useCallback, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
+import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 
 function SearchForm({searchTerm = ''}: {searchTerm: string}) {
@@ -17,6 +18,11 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
 
   const onChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value), [])
 
+  const onClearHandler = useCallback(() => {
+    setSearchInput('')
+    navigate('/')
+  }, [navigate])
+
   return (
     <Box component="form" onSubmit={onSubmitHandler}>
       <TextField
@@ -30,6 +36,13 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: searchTerm && (
+            <InputAdornment position="end">
+              <IconButton aria-label="Clear search" onClick={onClearHandler}>
+                <ClearIcon />
+              </IconButton>
             </InputAdornment>
           ),
         }}

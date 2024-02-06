@@ -41,16 +41,19 @@ const useApi = () => {
 
   return {
     getUserData: async (): Promise<User> => useFetchWithPath('/users/me'),
-    getAllUserStories: async (): Promise<UserStory[]> =>
-      useFetchWithPath('/userstories?status__is_archived=false&status__is_closed=false'),
+    getAllUserStories: async (): Promise<UserStory[]> => useFetchWithPath('/userstories'),
     getAllUserStoriesPaginated: async ({
       pageParam,
     }: {
       pageParam: number
     }): Promise<{data: UserStory[]; nextPage: number}> => useFetchWithPathPaginated('/userstories', pageParam),
-    getAllTasks: async (): Promise<Task[]> => useFetchWithPath('/tasks?status__is_closed=false'),
-    getAllIssues: async (): Promise<Issue[]> => useFetchWithPath('/issues?status__is_closed=false'),
+    getAllTasks: async (): Promise<Task[]> => useFetchWithPath('/tasks'),
+    getAllIssues: async (): Promise<Issue[]> => useFetchWithPath('/issues'),
     getAllProjects: async (): Promise<Project[]> => useFetchWithPath('/projects'),
+    searchIssues: async (searchTerm: string): Promise<Issue[]> => useFetchWithPath(`/issues?q=${searchTerm}`),
+    searchTasks: async (searchTerm: string): Promise<Task[]> => useFetchWithPath(`/tasks?q=${searchTerm}`),
+    searchUserStories: async (searchTerm: string): Promise<UserStory[]> =>
+      useFetchWithPath(`/userstories?q=${searchTerm}`),
     searchProject: async (id: number, searchTerm: string = ''): Promise<SearchResults> =>
       useFetchWithPath(`/search?project=${id}&text=${searchTerm}`),
   }
