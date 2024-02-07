@@ -1,25 +1,9 @@
-import {
-  Avatar,
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Chip,
-  Divider,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import {Avatar, Card, CardActionArea, CardActions, CardHeader, Chip, Divider, Typography, useTheme} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import {green, lime, orange, teal} from '@mui/material/colors'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 
-function TicketList({
-  tickets,
-  showDueDate = false,
-}: {
-  tickets: (UserStory | Issue | Task | Project)[]
-  showDueDate?: boolean
-}) {
+function TicketList({tickets}: {tickets: (UserStory | Issue | Task | Project)[]}) {
   const theme = useTheme()
   if (tickets.length === 0) {
     return <Typography sx={{p: 2}}>Currently no tickets</Typography>
@@ -29,13 +13,20 @@ function TicketList({
     return (element as Project).isProject
   }
 
+  const ticketColors = {
+    issue: lime[50],
+    project: teal[50],
+    task: green[50],
+    us: orange[50],
+  } as {[key: string]: string}
+
   return (
     <Grid container flexDirection="column">
       {tickets.map(ticket => {
         if (isProject(ticket)) {
           return (
             <Grid xs={12} key={ticket.path}>
-              <Card elevation={0}>
+              <Card elevation={0} sx={{backgroundColor: ticketColors.project}}>
                 <CardActionArea
                   component="a"
                   sx={{[theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'}}}
@@ -65,7 +56,10 @@ function TicketList({
             <Card elevation={0}>
               <CardActionArea
                 component="a"
-                sx={{[theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'}}}
+                sx={{
+                  backgroundColor: ticketColors[ticket.ticketType],
+                  [theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'},
+                }}
                 href={ticket.path}
               >
                 <CardHeader
@@ -87,7 +81,7 @@ function TicketList({
                   }
                   titleTypographyProps={{
                     color: 'text.secondary',
-                    variant: 'caption',
+                    variant: 'overline',
                   }}
                   subheader={ticket.subject}
                   subheaderTypographyProps={{
@@ -95,13 +89,22 @@ function TicketList({
                     variant: 'body1',
                   }}
                 />
-                {showDueDate && <CardContent>Due: {ticket.due_date}</CardContent>}
                 <CardActions disableSpacing sx={{justifyContent: 'end', flexWrap: 'wrap'}}>
+                  {ticket.due_date && (
+                    <Chip
+                      label={`Due: ${ticket.due_date}`}
+                      color={new Date(ticket.due_date) < new Date() ? 'error' : 'default'}
+                      sx={{
+                        mb: 1,
+                      }}
+                    />
+                  )}
                   {ticket.assigned_to_extra_info?.full_name_display && (
                     <Chip
                       label={`Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
                       sx={{
                         mb: 1,
+                        ml: 2,
                       }}
                     />
                   )}
