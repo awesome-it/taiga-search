@@ -1,6 +1,5 @@
 import {Avatar, Card, CardActionArea, CardActions, CardHeader, Chip, Divider, Typography, useTheme} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import {green, lime, orange, teal} from '@mui/material/colors'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 
 function TicketList({tickets}: {tickets: (UserStory | Issue | Task | Project)[]}) {
@@ -14,10 +13,10 @@ function TicketList({tickets}: {tickets: (UserStory | Issue | Task | Project)[]}
   }
 
   const ticketColors = {
-    issue: lime[50],
-    project: teal[50],
-    task: green[50],
-    us: orange[50],
+    issue: '#DC143C',
+    project: '#191970',
+    task: '#228B22',
+    us: '#DAA520',
   } as {[key: string]: string}
 
   return (
@@ -26,7 +25,7 @@ function TicketList({tickets}: {tickets: (UserStory | Issue | Task | Project)[]}
         if (isProject(ticket)) {
           return (
             <Grid xs={12} key={ticket.path}>
-              <Card elevation={0} sx={{backgroundColor: ticketColors.project}}>
+              <Card elevation={0} square sx={{borderLeft: `5px solid ${ticketColors[ticket.ticketType]}`}}>
                 <CardActionArea
                   component="a"
                   sx={{[theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'}}}
@@ -53,11 +52,10 @@ function TicketList({tickets}: {tickets: (UserStory | Issue | Task | Project)[]}
         }
         return (
           <Grid xs={12} key={ticket.path}>
-            <Card elevation={0}>
+            <Card elevation={0} square sx={{borderLeft: `5px solid ${ticketColors[ticket.ticketType]}`}}>
               <CardActionArea
                 component="a"
                 sx={{
-                  backgroundColor: ticketColors[ticket.ticketType],
                   [theme.breakpoints.up('sm')]: {justifyContent: 'space-between', display: 'flex'},
                 }}
                 href={ticket.path}
