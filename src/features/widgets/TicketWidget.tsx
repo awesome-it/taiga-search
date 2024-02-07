@@ -5,12 +5,10 @@ import TicketList from './TicketList.tsx'
 function TicketWidget({
   tickets,
   title,
-  showDueDate = false,
   style,
 }: {
   tickets: (UserStory | Issue | Task | Project)[]
   title?: string
-  showDueDate?: boolean
   style?: object
 }) {
   return (
@@ -20,6 +18,7 @@ function TicketWidget({
           title={title}
           titleTypographyProps={{fontSize: '1rem', color: 'text.secondary'}}
           sx={{
+            transformOrigin: 'top left',
             py: 0,
             px: 1,
             position: 'absolute',
@@ -37,7 +36,7 @@ function TicketWidget({
           ...style,
         }}
       >
-        <TicketList tickets={tickets} showDueDate={showDueDate} />
+        <TicketList tickets={tickets} />
       </CardContent>
     </Card>
   )
