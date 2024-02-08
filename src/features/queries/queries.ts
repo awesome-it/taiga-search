@@ -38,6 +38,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         select: (data: Issue[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'issue'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/issue/${ticket.ref}`
             return ticket
           })
@@ -61,6 +62,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         select: (data: Task[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'task'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/task/${ticket.ref}`
             return ticket
           })
@@ -72,6 +74,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         select: (data: UserStory[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'us'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/us/${ticket.ref}`
             return ticket
           })
@@ -109,6 +112,7 @@ export const useAllTicketsQueries = () => {
         select: (data: UserStory[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'us'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/us/${ticket.ref}`
             return ticket
           })
@@ -120,6 +124,7 @@ export const useAllTicketsQueries = () => {
         select: (data: Task[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'task'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/task/${ticket.ref}`
             return ticket
           })
@@ -131,6 +136,7 @@ export const useAllTicketsQueries = () => {
         select: (data: Issue[]) => {
           return data.map(ticket => {
             ticket.ticketType = 'issue'
+            ticket.isProject = false
             ticket.path = `/project/${ticket.project_extra_info.slug}/issue/${ticket.ref}`
             return ticket
           })
