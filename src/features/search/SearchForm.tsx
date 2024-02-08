@@ -15,13 +15,15 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
 
   const parseFilters = useCallback(
     (searchTermToParse: string) => {
-      if (searchTermToParse.indexOf(' project:') !== -1) {
+      const re = /project:(\w+)/g
+      const result = re.exec(searchTermToParse)
+      if (result) {
         // Powersearch that filters for a project
-        const [search, projectName] = searchTermToParse.split(' project:')
+        const search = searchTermToParse.replace(result[0], '').trim()
 
         if (allProjects) {
           const project = allProjects.find(pro => {
-            return projectName.trim().toLowerCase() === pro.name.toLowerCase()
+            return result[1].trim().toLowerCase() === pro.name.toLowerCase()
           })
           if (project) {
             setFilters(filters => {
@@ -57,8 +59,9 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
 
   const onClearHandler = useCallback(() => {
     setSearchInput('')
+    setFilters(JSON.parse(sessionStorage.getItem('filterData') ?? '{}'))
     navigate('/')
-  }, [navigate])
+  }, [setFilters, navigate])
 
   return (
     <Box component="form" onSubmit={onSubmitHandler}>
