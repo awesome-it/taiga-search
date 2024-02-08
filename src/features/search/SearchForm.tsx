@@ -3,17 +3,54 @@ import {ChangeEvent, FormEventHandler, useCallback, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
+import useTaigaQueries from '../queries/queries.ts'
+import {useFiltersDispatch} from '../filter/FilterProvider.tsx'
 
 function SearchForm({searchTerm = ''}: {searchTerm: string}) {
   const [searchInput, setSearchInput] = useState(searchTerm)
   const navigate = useNavigate()
+  const taigaQueries = useTaigaQueries()
+  const {data: allProjects} = taigaQueries.useProjectQuery()
+  const setFilters = useFiltersDispatch()
+
+  const parseFilters = useCallback(
+    (searchTermToParse: string) => {
+      if (searchTermToParse.indexOf(' project:') !== -1) {
+        // Powersearch that filters for a project
+        const [search, projectName] = searchTermToParse.split(' project:')
+
+        if (allProjects) {
+          const project = allProjects.find(pro => {
+            return projectName.trim().toLowerCase() === pro.name.toLowerCase()
+          })
+          if (project) {
+            setFilters(filters => {
+              const newProjects =
+                !filters.projects || filters.projects.length === 0
+                  ? [project!.id]
+                  : filters.projects && filters.projects.length > 0 && !filters.projects.includes(project!.id)
+                    ? [...filters.projects, project!.id]
+                    : filters.projects
+
+              return {...filters, projects: newProjects}
+            })
+          }
+          return search.trim()
+        }
+      }
+      return searchTermToParse
+    },
+    [setFilters, allProjects],
+  )
 
   const onSubmitHandler: FormEventHandler<HTMLFormElement> = useCallback(
     e => {
       e.preventDefault()
-      navigate(`/${searchInput}`)
+      const parsedSearch = parseFilters(searchInput)
+      setSearchInput(parsedSearch)
+      navigate(`/${parsedSearch}`)
     },
-    [navigate, searchInput],
+    [navigate, searchInput, parseFilters],
   )
 
   const onChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value), [])

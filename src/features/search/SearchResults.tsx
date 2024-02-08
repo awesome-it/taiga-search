@@ -5,9 +5,21 @@ import TicketWidget from '../widgets/TicketWidget.tsx'
 
 function SearchResults() {
   const {searchTerm} = useParams()
-
   const taigaQueries = useTaigaQueries()
-  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(searchTerm!)
+
+  if (!searchTerm) {
+    return (
+      <Typography>
+        Sorry, an error occured.
+        <br />
+        <Link component={RouterLink} to="/" reloadDocument>
+          Return to dashboard
+        </Link>
+      </Typography>
+    )
+  }
+
+  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(searchTerm)
 
   if (isLoading) {
     return <Typography>Loading...</Typography>
