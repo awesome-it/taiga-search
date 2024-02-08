@@ -16,7 +16,6 @@ function App() {
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
 
   const {data: user} = taigaQueries.useUserQuery()
-  // const {data: allUserStories} = taigaQueries.useAllTicketsQueriesPaginated()
   const {data: allTickets} = taigaQueries.useAllTicketsQueries()
 
   const [currentTab, setCurrentTab] = useState('1')
@@ -24,8 +23,6 @@ function App() {
   const handleTabChange = (_event: SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue)
   }
-
-  // console.log('All userstories', {allUserStories})
 
   return (
     <Container

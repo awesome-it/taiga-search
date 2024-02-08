@@ -69,33 +69,6 @@ export type Project = {
   videoconferences_extra_data: null
 }
 
-type BaseSearchResult = {
-  id: number
-  projectId: number
-  path: string
-  ref: number
-  status: number
-  subject: string
-}
-
-export type IssueSearchResult = BaseSearchResult & {
-  assigned_to: number
-}
-
-export type TaskSearchResult = BaseSearchResult & {
-  assigned_to: number
-}
-
-export type UserStorySearchResult = BaseSearchResult & {
-  milestone_name: string | null
-  milestone_slug: string | null
-  total_points: number
-}
-
-export type EpicSearchResult = BaseSearchResult & {
-  assigned_to: number
-}
-
 type Ticket = {
   ticketType: string // Custom Property
   path: string // Custom Property
@@ -213,23 +186,6 @@ export type UserStory = Ticket & {
   total_comments: number
   total_points: number
   tribe_gig: null
-}
-
-export type WikiPage = {
-  id: number
-  projectId: number
-  slug: string
-}
-
-export type SearchResults = {
-  count: number
-  projectId: number
-  projectSlug: string
-  epics: EpicSearchResult[]
-  issues: IssueSearchResult[]
-  tasks: TaskSearchResult[]
-  userstories: UserStorySearchResult[]
-  wikipages: WikiPage[]
 }
 
 export type User = {
