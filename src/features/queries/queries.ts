@@ -1,4 +1,4 @@
-import {useInfiniteQuery, useQueries, useQuery} from '@tanstack/react-query'
+import {useQueries, useQuery} from '@tanstack/react-query'
 import {useCallback} from 'react'
 import useApi from '../api/api.ts'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
@@ -15,18 +15,6 @@ export const useProjectQuery = () => {
   return useQuery({
     queryKey: ['projects'],
     queryFn: getAllProjects,
-  })
-}
-
-export const useAllTicketsQueriesPaginated = () => {
-  const {getAllUserStoriesPaginated} = useApi()
-  return useInfiniteQuery({
-    queryKey: ['userstories'],
-    queryFn: getAllUserStoriesPaginated,
-    initialPageParam: 1,
-    getNextPageParam: lastPage => {
-      return lastPage.nextPage
-    },
   })
 }
 
@@ -175,7 +163,6 @@ const useTaigaQueries = () => {
     useUserQuery,
     useProjectQuery,
     useAllTicketsQueries,
-    useAllTicketsQueriesPaginated,
     useSearchAllTicketsQueries,
   }
 }
