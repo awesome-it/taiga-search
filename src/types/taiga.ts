@@ -70,6 +70,7 @@ export type Project = {
 }
 
 type Ticket = {
+  isProject: false // Custom Property
   ticketType: string // Custom Property
   path: string // Custom Property
   assigned_to: number
