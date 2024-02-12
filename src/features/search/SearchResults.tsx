@@ -20,7 +20,7 @@ function SearchResults() {
     )
   }
   const cleanSearchTerm = useCallback((searchTermToParse: string) => {
-    const re = /project:(\w+)/g
+    const re = /project:(\S+)/g
     const result = re.exec(searchTermToParse)
     if (result) {
       // Powersearch that filters for a project

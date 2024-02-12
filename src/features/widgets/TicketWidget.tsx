@@ -24,7 +24,7 @@ function TicketWidget({
     let tempFilters = {} as {projects: number[]}
 
     if (searchTerm) {
-      const re = /project:(\w+)/g
+      const re = /project:(\S+)/g
       const result = re.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
