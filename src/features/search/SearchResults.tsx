@@ -1,5 +1,6 @@
 import {Link, Typography} from '@mui/material'
 import {Link as RouterLink, useParams} from 'react-router-dom'
+import {useCallback} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'
 
@@ -18,8 +19,19 @@ function SearchResults() {
       </Typography>
     )
   }
+  const cleanSearchTerm = useCallback((searchTermToParse: string) => {
+    const re = /project:(\w+)/g
+    const result = re.exec(searchTermToParse)
+    if (result) {
+      // Powersearch that filters for a project
+      const search = searchTermToParse.replace(result[0], '').trim()
 
-  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(searchTerm)
+      return search.trim()
+    }
+    return searchTermToParse
+  }, [])
+
+  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(cleanSearchTerm(searchTerm))
 
   if (isLoading) {
     return <Typography>Loading...</Typography>
