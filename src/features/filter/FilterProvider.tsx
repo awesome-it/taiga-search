@@ -7,7 +7,7 @@ type FilterData = {
 const FilterContext = createContext({} as FilterData)
 const FilterDispatchContext = createContext<React.Dispatch<React.SetStateAction<FilterData>>>(() => {})
 function FilterProvider({children}: {children: ReactNode}) {
-  const sessionFilterData = sessionStorage.getItem('filterData') ?? '{}'
+  const sessionFilterData = localStorage.getItem('filterData') ?? '{}'
   const [filterData, setFilterData] = useState(JSON.parse(sessionFilterData) as FilterData)
 
   return (

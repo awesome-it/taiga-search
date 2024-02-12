@@ -17,7 +17,7 @@ function ProjectFilter() {
   const handleChange = (_event: SyntheticEvent, value: Project[]) => {
     setProjectsFilter(value)
     setFilters({projects: value.map(project => project.id)})
-    sessionStorage.setItem('filterData', JSON.stringify({projects: value.map(project => project.id)}))
+    localStorage.setItem('filterData', JSON.stringify({projects: value.map(project => project.id)}))
   }
 
   useEffect(() => {

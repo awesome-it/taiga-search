@@ -22,7 +22,7 @@ function SearchForm({searchTerm = ''}: {searchTerm: string}) {
 
   const onClearHandler = useCallback(() => {
     setSearchInput('')
-    setFilters(JSON.parse(sessionStorage.getItem('filterData') ?? '{}'))
+    setFilters(JSON.parse(localStorage.getItem('filterData') ?? '{}'))
     navigate('/')
   }, [setFilters, navigate])
 
