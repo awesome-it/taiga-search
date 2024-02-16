@@ -1,8 +1,19 @@
 import {Link, Typography} from '@mui/material'
 import {Link as RouterLink, useParams} from 'react-router-dom'
-import {useCallback} from 'react'
+import {useMemo} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'
+import {Issue, UserStory, Task, Project} from '../../types/taiga.ts'
+
+const sortByProject = (a: Issue | UserStory | Task | Project, b: Issue | UserStory | Task | Project) => {
+  if (a.ticketType === 'project' && b.ticketType !== 'project') {
+    return -1
+  }
+  if (a.ticketType !== 'project' && b.ticketType === 'project') {
+    return 1
+  }
+  return 0
+}
 
 function SearchResults() {
   const {searchTerm} = useParams()
@@ -19,19 +30,20 @@ function SearchResults() {
       </Typography>
     )
   }
-  const cleanSearchTerm = useCallback((searchTermToParse: string) => {
+
+  const cleanedSearchTerm = useMemo(() => {
     const re = /project:(\S+)/g
-    const result = re.exec(searchTermToParse)
+    const result = re.exec(searchTerm)
     if (result) {
       // Powersearch that filters for a project
-      const search = searchTermToParse.replace(result[0], '').trim()
-
+      const search = searchTerm.replace(result[0], '').trim()
       return search.trim()
     }
-    return searchTermToParse
-  }, [])
+    return searchTerm
+  }, [searchTerm])
 
-  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(cleanSearchTerm(searchTerm))
+  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(cleanedSearchTerm)
+  const sortedTickets = useMemo(() => allTickets.sort(sortByProject), [allTickets])
 
   if (isLoading) {
     return <Typography>Loading...</Typography>
@@ -47,21 +59,7 @@ function SearchResults() {
       </Typography>
     )
   }
-  return (
-    <TicketWidget
-      tickets={allTickets.sort((a, b) => {
-        if (a.ticketType === 'project' && b.ticketType !== 'project') {
-          return -1
-        }
-        if (a.ticketType !== 'project' && b.ticketType === 'project') {
-          return 1
-        }
-        return 0
-      })}
-      title={`Results for ${searchTerm}`}
-      style={{height: '82vh'}}
-    />
-  )
+  return <TicketWidget tickets={sortedTickets} title={`Results for "${searchTerm}"`} />
 }
 
 export default SearchResults

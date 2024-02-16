@@ -1,6 +1,7 @@
-import {Card, CardContent, CardHeader} from '@mui/material'
-import {useCallback} from 'react'
+import {Box, Paper, Theme, Typography, useTheme} from '@mui/material'
+import {useMemo} from 'react'
 import {useParams} from 'react-router-dom'
+import {SxProps} from '@mui/system'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 import TicketList from './TicketList.tsx'
 import {useFilters} from '../filter/FilterProvider.tsx'
@@ -9,18 +10,19 @@ import useTaigaQueries from '../queries/queries.ts'
 function TicketWidget({
   tickets,
   title,
-  style,
+  sx,
 }: {
   tickets: (UserStory | Issue | Task | Project)[]
   title?: string
-  style?: object
+  sx?: SxProps<Theme>
 }) {
   const filters = useFilters()
   const taigaQueries = useTaigaQueries()
   const {data: allProjects} = taigaQueries.useProjectQuery()
+  const theme = useTheme()
+  const {searchTerm} = useParams()
 
-  const filteredTickets = useCallback(() => {
-    const {searchTerm} = useParams()
+  const filteredTickets = useMemo(() => {
     let tempFilters = {} as {projects: number[]}
 
     if (searchTerm) {
@@ -56,35 +58,42 @@ function TicketWidget({
       }
       return isFiltered
     })
-  }, [allProjects, filters, tickets])
+  }, [allProjects, filters, searchTerm, tickets])
+
   return (
-    <Card variant="outlined">
+    <Paper
+      variant="outlined"
+      sx={{flexGrow: '1', display: 'flex', flexDirection: 'column', minHeight: '0px', position: 'relative', ...sx}}
+    >
       {title && (
-        <CardHeader
-          title={title}
-          titleTypographyProps={{fontSize: '1rem', color: 'text.secondary'}}
+        <Typography
+          variant="caption"
           sx={{
-            transformOrigin: 'top left',
-            py: 0,
-            px: 1,
+            color: 'text.secondary',
             position: 'absolute',
-            top: 0,
-            left: '1rem',
+            left: theme.spacing(1),
+            top: theme.spacing(-1),
+            p: 0,
+            py: 0,
+            px: 0.5,
+            margin: 0,
             backgroundColor: 'white',
-            transform: 'scale(0.75)',
+            zIndex: theme.zIndex.appBar,
           }}
-        />
+        >
+          {title}
+        </Typography>
       )}
-      <CardContent
+      <Box
         sx={{
+          flexGrow: 1,
           overflow: 'auto',
-          px: 0,
-          ...style,
+          fontSize: '25px',
         }}
       >
-        <TicketList tickets={filteredTickets()} />
-      </CardContent>
-    </Card>
+        <TicketList tickets={filteredTickets} />
+      </Box>
+    </Paper>
   )
 }
 
