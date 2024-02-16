@@ -69,7 +69,7 @@ export type Project = {
   videoconferences_extra_data: null
 }
 
-type Ticket = {
+export type Ticket = {
   isProject: false // Custom Property
   ticketType: string // Custom Property
   path: string // Custom Property
