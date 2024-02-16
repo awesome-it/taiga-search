@@ -5,6 +5,7 @@ import {
   CardActions,
   CardHeader,
   Chip,
+  CircularProgress,
   Divider,
   Stack,
   Typography,
@@ -25,7 +26,14 @@ const isProject = (element: UserStory | Issue | Task | Project): element is Proj
   return (element as Project).isProject
 }
 
-function TicketList({tickets: givenTickets}: {tickets: (UserStory | Issue | Task | Project)[]}) {
+function TicketList({
+  tickets: givenTickets,
+  isLoading = false,
+  children,
+}: React.PropsWithChildren<{
+  tickets: (UserStory | Issue | Task | Project)[]
+  isLoading?: boolean
+}>) {
   const theme = useTheme()
 
   const [tickets, projects] = useMemo(() => {
@@ -41,11 +49,17 @@ function TicketList({tickets: givenTickets}: {tickets: (UserStory | Issue | Task
     return [curTickets, curProjects]
   }, [givenTickets])
 
-  return projects.length < 1 && tickets.length < 1 ? (
+  return isLoading || (projects.length < 1 && tickets.length < 1) ? (
     <Stack flexGrow={1} justifyContent="center" alignItems="center" sx={{height: '100%'}}>
-      <Typography variant="body2" color="text.secondary">
-        No Tickets
-      </Typography>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        children || (
+          <Typography variant="body2" color="text.secondary">
+            No Tickets
+          </Typography>
+        )
+      )}
     </Stack>
   ) : (
     <Grid container flexDirection="column">

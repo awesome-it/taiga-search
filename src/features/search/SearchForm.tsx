@@ -5,7 +5,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 import {useFiltersDispatch} from '../filter/FilterProvider.tsx'
 
-function SearchForm({searchTerm = ''}: {searchTerm: string}) {
+function SearchForm({searchTerm = ''}: {searchTerm?: string}) {
   const [searchInput, setSearchInput] = useState(searchTerm)
   const navigate = useNavigate()
   const setFilters = useFiltersDispatch()

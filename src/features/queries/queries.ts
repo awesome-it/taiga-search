@@ -1,5 +1,5 @@
 import {useQueries, useQuery} from '@tanstack/react-query'
-import {useCallback} from 'react'
+import {useCallback, useMemo} from 'react'
 import useApi from '../api/api.ts'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 
@@ -18,7 +18,14 @@ export const useProjectQuery = () => {
   })
 }
 
-export const useSearchAllTicketsQueries = (searchTerm: string) => {
+export const useSearchAllTicketsQueries = ({
+  searchTerm,
+  enabled: givenEnabled = true,
+}: {
+  searchTerm: string
+  enabled?: boolean
+}) => {
+  const {data: user} = useUserQuery()
   const {searchIssues, searchProjects, searchTasks, searchUserStories} = useApi()
   const doSearchIssues = useCallback((): Promise<Issue[]> => searchIssues(searchTerm), [searchIssues, searchTerm])
   const doSearchProjects = useCallback(
@@ -30,9 +37,11 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
     (): Promise<UserStory[]> => searchUserStories(searchTerm),
     [searchTerm, searchUserStories],
   )
+  const enabled = useMemo(() => !!searchTerm && !!user && givenEnabled, [searchTerm, user, givenEnabled])
   return useQueries({
     queries: [
       {
+        enabled,
         queryKey: ['issues', searchTerm],
         queryFn: doSearchIssues,
         select: (data: Issue[]) => {
@@ -45,6 +54,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         },
       },
       {
+        enabled,
         queryKey: ['projects', searchTerm],
         queryFn: doSearchProjects,
         select: (data: Project[]) => {
@@ -57,6 +67,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         },
       },
       {
+        enabled,
         queryKey: ['tasks', searchTerm],
         queryFn: doSearchTasks,
         select: (data: Task[]) => {
@@ -69,6 +80,7 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
         },
       },
       {
+        enabled,
         queryKey: ['userstories', searchTerm],
         queryFn: doSearchUserStories,
         select: (data: UserStory[]) => {
@@ -102,11 +114,14 @@ export const useSearchAllTicketsQueries = (searchTerm: string) => {
   })
 }
 
-export const useAllTicketsQueries = () => {
+export const useAllTicketsQueries = ({enabled: givenEnabled}: {enabled?: boolean} = {enabled: true}) => {
   const {getAllUserStories, getAllTasks, getAllIssues} = useApi()
+  const {data: user} = useUserQuery()
+  const enabled = useMemo(() => !!user && givenEnabled, [user, givenEnabled])
   return useQueries({
     queries: [
       {
+        enabled,
         queryKey: ['userstories'],
         queryFn: getAllUserStories,
         select: (data: UserStory[]) => {
@@ -119,6 +134,7 @@ export const useAllTicketsQueries = () => {
         },
       },
       {
+        enabled,
         queryKey: ['tasks'],
         queryFn: getAllTasks,
         select: (data: Task[]) => {
@@ -131,6 +147,7 @@ export const useAllTicketsQueries = () => {
         },
       },
       {
+        enabled,
         queryKey: ['issues'],
         queryFn: getAllIssues,
         select: (data: Issue[]) => {

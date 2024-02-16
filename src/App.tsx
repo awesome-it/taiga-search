@@ -15,7 +15,7 @@ function App() {
       <Box display="flex" flexDirection="column" gap={2} flexGrow={1} m={2} sx={{minHeight: '0px'}}>
         <Box display="flex" flexDirection="row" gap={2}>
           <Box flexGrow={3}>
-            <SearchForm searchTerm={searchTerm ?? ''} />
+            <SearchForm searchTerm={searchTerm} />
           </Box>
           <Box flexGrow={1}>
             <ProjectFilter />

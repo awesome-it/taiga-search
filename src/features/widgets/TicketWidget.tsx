@@ -10,15 +10,18 @@ import useTaigaQueries from '../queries/queries.ts'
 function TicketWidget({
   tickets,
   title,
+  isLoading = false,
   sx,
-}: {
+  children,
+}: React.PropsWithChildren<{
   tickets: (UserStory | Issue | Task | Project)[]
+  isLoading?: boolean
   title?: string
   sx?: SxProps<Theme>
-}) {
+}>) {
   const filters = useFilters()
   const taigaQueries = useTaigaQueries()
-  const {data: allProjects} = taigaQueries.useProjectQuery()
+  const {data: allProjects, ...projectQuery} = taigaQueries.useProjectQuery()
   const theme = useTheme()
   const {searchTerm} = useParams()
 
@@ -91,7 +94,9 @@ function TicketWidget({
           fontSize: '25px',
         }}
       >
-        <TicketList tickets={filteredTickets} />
+        <TicketList isLoading={projectQuery.isLoading || isLoading} tickets={filteredTickets}>
+          {children}
+        </TicketList>
       </Box>
     </Paper>
   )
