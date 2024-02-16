@@ -24,13 +24,13 @@ export default function DashboardView() {
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
 
   const {data: user} = taigaQueries.useUserQuery()
-  const {data: allTickets} = taigaQueries.useAllTicketsQueries()
+  const {data: allTickets, isLoading} = taigaQueries.useAllTicketsQueries()
 
   const widgets = useMemo(
     () => ({
       assignedTo: {
         label: 'My Tickets',
-        tickets: !user ? [] : allTickets.filter(ticket => ticket.assigned_to === user.id),
+        tickets: allTickets.filter(ticket => !!user && ticket.assigned_to === user.id),
       },
       watched: {
         label: 'Watched Tickets',
@@ -55,35 +55,51 @@ export default function DashboardView() {
     setCurrentTab(newValue)
   }, [])
 
-  return (
-    user &&
-    allTickets &&
-    (smallView ? (
-      <Stack sx={{minHeight: 0}}>
-        <TabContext value={currentTab}>
-          <TabList onChange={handleTabChange} variant="scrollable" allowScrollButtonsMobile>
-            {Object.entries(widgets).map(([key, value]) => (
-              <Tab key={key} label={value.label} value={key} />
-            ))}
-          </TabList>
+  return smallView ? (
+    <Stack sx={{minHeight: 0, height: '100%'}}>
+      <TabContext value={currentTab}>
+        <TabList onChange={handleTabChange} variant="scrollable" allowScrollButtonsMobile>
           {Object.entries(widgets).map(([key, value]) => (
-            <CustomTabPanel key={key} value={key} currentValue={currentTab}>
-              <TicketWidget tickets={value.tickets} />
-            </CustomTabPanel>
+            <Tab key={key} label={value.label} value={key} />
           ))}
-        </TabContext>
+        </TabList>
+        {Object.entries(widgets).map(([key, value]) => (
+          <CustomTabPanel key={key} value={key} currentValue={currentTab}>
+            <TicketWidget isLoading={isLoading} tickets={value.tickets} />
+          </CustomTabPanel>
+        ))}
+      </TabContext>
+    </Stack>
+  ) : (
+    <Stack sx={{minHeight: 0, height: '100%'}} gap={2}>
+      <Stack direction="row" sx={{minHeight: 0, height: '50%'}} gap={2}>
+        <TicketWidget
+          isLoading={isLoading}
+          tickets={widgets.assignedTo.tickets}
+          title={widgets.assignedTo.label}
+          sx={{width: '50%'}}
+        />
+        <TicketWidget
+          isLoading={isLoading}
+          tickets={widgets.watched.tickets}
+          title={widgets.watched.label}
+          sx={{width: '50%'}}
+        />
       </Stack>
-    ) : (
-      <Stack sx={{minHeight: 0}} gap={2}>
-        <Stack direction="row" sx={{minHeight: 0, height: '50%'}} gap={2}>
-          <TicketWidget tickets={widgets.assignedTo.tickets} title={widgets.assignedTo.label} sx={{width: '50%'}} />
-          <TicketWidget tickets={widgets.watched.tickets} title={widgets.watched.label} sx={{width: '50%'}} />
-        </Stack>
-        <Stack direction="row" sx={{minHeight: 0, height: '50%'}} gap={2}>
-          <TicketWidget tickets={widgets.unassigned.tickets} title={widgets.unassigned.label} sx={{width: '50%'}} />
-          <TicketWidget tickets={widgets.withDeadline.tickets} title={widgets.withDeadline.label} sx={{width: '50%'}} />
-        </Stack>
+      <Stack direction="row" sx={{minHeight: 0, height: '50%'}} gap={2}>
+        <TicketWidget
+          isLoading={isLoading}
+          tickets={widgets.unassigned.tickets}
+          title={widgets.unassigned.label}
+          sx={{width: '50%'}}
+        />
+        <TicketWidget
+          isLoading={isLoading}
+          tickets={widgets.withDeadline.tickets}
+          title={widgets.withDeadline.label}
+          sx={{width: '50%'}}
+        />
       </Stack>
-    ))
+    </Stack>
   )
 }

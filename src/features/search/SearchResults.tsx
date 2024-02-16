@@ -1,6 +1,6 @@
-import {Link, Typography} from '@mui/material'
-import {Link as RouterLink, useParams} from 'react-router-dom'
-import {useMemo} from 'react'
+import {Alert, Button, Typography} from '@mui/material'
+import {useNavigate, useParams} from 'react-router-dom'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'
 import {Issue, UserStory, Task, Project} from '../../types/taiga.ts'
@@ -15,19 +15,27 @@ const sortByProject = (a: Issue | UserStory | Task | Project, b: Issue | UserSto
   return 0
 }
 
+const ReturnToDashboardLink = () => {
+  const navigate = useNavigate()
+  const handleClick = useCallback(() => navigate('/'), [navigate])
+
+  return (
+    <Button variant="text" onClick={handleClick}>
+      Return to dashboard
+    </Button>
+  )
+}
+
 function SearchResults() {
   const {searchTerm} = useParams()
   const taigaQueries = useTaigaQueries()
 
   if (!searchTerm) {
     return (
-      <Typography>
-        Sorry, an error occured.
-        <br />
-        <Link component={RouterLink} to="/" reloadDocument>
-          Return to dashboard
-        </Link>
-      </Typography>
+      <>
+        <Alert severity="error">Sorry, an unexpected error occurred.</Alert>
+        <ReturnToDashboardLink />
+      </>
     )
   }
 
@@ -42,24 +50,19 @@ function SearchResults() {
     return searchTerm
   }, [searchTerm])
 
-  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries(cleanedSearchTerm)
+  const {data: allTickets, ...searchQuery} = taigaQueries.useSearchAllTicketsQueries({searchTerm: cleanedSearchTerm})
   const sortedTickets = useMemo(() => allTickets.sort(sortByProject), [allTickets])
 
-  if (isLoading) {
-    return <Typography>Loading...</Typography>
-  }
+  // Handle loading state which is true on loading.
+  const [isLoading, setLoading] = useState<boolean>(true)
+  useEffect(() => setLoading(searchQuery.isLoading), [searchQuery.isLoading])
 
-  if (allTickets && allTickets.length === 0) {
-    return (
-      <Typography>
-        Sorry! There are no results for &quot;{searchTerm}&quot; <br />
-        <Link component={RouterLink} to="/" reloadDocument>
-          Return to dashboard
-        </Link>
-      </Typography>
-    )
-  }
-  return <TicketWidget tickets={sortedTickets} title={`Results for "${searchTerm}"`} />
+  return (
+    <TicketWidget isLoading={isLoading} tickets={sortedTickets} title={`Results for "${searchTerm}"`}>
+      <Typography>Sorry! There are no results for &quot;{searchTerm}&quot;</Typography>
+      <ReturnToDashboardLink />
+    </TicketWidget>
+  )
 }
 
 export default SearchResults
