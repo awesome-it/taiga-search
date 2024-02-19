@@ -21,7 +21,7 @@ function App() {
             <ProjectFilter />
           </Box>
         </Box>
-        {searchTerm ? <SearchResults /> : <DashboardView />}
+        {searchTerm ? <SearchResults searchTerm={searchTerm} /> : <DashboardView />}
       </Box>
     </FilterProvider>
   )

@@ -1,6 +1,6 @@
 import {Box, IconButton, InputAdornment, TextField} from '@mui/material'
-import {ChangeEvent, FormEventHandler, useCallback, useState} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {ChangeEvent, FormEventHandler, useCallback, useEffect, useRef, useState} from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 import {useFiltersDispatch} from '../filter/FilterProvider.tsx'
@@ -26,10 +26,21 @@ function SearchForm({searchTerm = ''}: {searchTerm?: string}) {
     navigate('/')
   }, [setFilters, navigate])
 
+  // Run clear handler on location change
+  const location = useLocation()
+  const inputField = useRef<HTMLInputElement>()
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setSearchInput('')
+      inputField.current?.focus()
+    }
+  }, [location])
+
   return (
     <Box component="form" onSubmit={onSubmitHandler}>
       <TextField
         name="searchTerm"
+        inputRef={inputField}
         fullWidth
         autoFocus
         value={searchInput}
