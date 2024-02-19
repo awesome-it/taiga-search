@@ -1,5 +1,5 @@
-import {Alert, Button, Typography} from '@mui/material'
-import {useNavigate, useParams} from 'react-router-dom'
+import {Button, Typography} from '@mui/material'
+import {useNavigate} from 'react-router-dom'
 import {useCallback, useEffect, useMemo, useState} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'
@@ -26,18 +26,8 @@ const ReturnToDashboardLink = () => {
   )
 }
 
-function SearchResults() {
-  const {searchTerm} = useParams()
+function SearchResults({searchTerm}: {searchTerm: string}) {
   const taigaQueries = useTaigaQueries()
-
-  if (!searchTerm) {
-    return (
-      <>
-        <Alert severity="error">Sorry, an unexpected error occurred.</Alert>
-        <ReturnToDashboardLink />
-      </>
-    )
-  }
 
   const cleanedSearchTerm = useMemo(() => {
     const re = /project:(\S+)/g
