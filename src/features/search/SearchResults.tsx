@@ -31,7 +31,7 @@ function SearchResults({searchTerm}: {searchTerm: string}) {
 
   const cleanedSearchTerm = useMemo(() => {
     const projectRe = /project:(\S+)/g
-    const statusRe = /status:(!?)(\S+)/g
+    const statusRe = /status:(!?)(".+"|\S+)/g
     const result = projectRe.exec(searchTerm)
     let search = searchTerm
     if (result) {
