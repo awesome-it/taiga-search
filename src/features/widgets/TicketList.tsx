@@ -46,7 +46,19 @@ function TicketList({
         curTickets.push(ticket)
       }
     })
-    return [curTickets, curProjects]
+
+    return [
+      curTickets.sort((a, b) => {
+        if (a.is_closed && !b.is_closed) {
+          return 1
+        }
+        if (!a.is_closed && b.is_closed) {
+          return -1
+        }
+        return 0
+      }),
+      curProjects,
+    ]
   }, [givenTickets])
 
   return isLoading || (projects.length < 1 && tickets.length < 1) ? (
