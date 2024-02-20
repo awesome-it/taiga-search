@@ -33,7 +33,7 @@ function TicketWidget({
 
     if (searchTerm) {
       const projectRe = /project:(\S+)/g
-      const statusRe = /status:(!?)(\S+)/g
+      const statusRe = /status:(!?)(".+"|\S+)/g
       const result = projectRe.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
@@ -50,7 +50,7 @@ function TicketWidget({
       if (statusResult) {
         // Powersearch on status done or not done
         const negation = statusResult[1] === '!'
-        const status = statusResult[2].toLowerCase()
+        const status = statusResult[2].toLowerCase().replace(/"/g, '')
         if (status !== 'done') {
           tempFilters = {...tempFilters, status: {exclude: negation, name: status}}
         }
