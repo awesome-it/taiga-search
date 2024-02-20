@@ -26,11 +26,15 @@ function TicketWidget({
   const {searchTerm} = useParams()
 
   const filteredTickets = useMemo(() => {
-    let tempFilters = {} as {projects: number[]}
+    let tempFilters = {} as {
+      projects?: number[]
+      status?: {exclude: boolean; name: string}
+    }
 
     if (searchTerm) {
-      const re = /project:(\S+)/g
-      const result = re.exec(searchTerm)
+      const projectRe = /project:(\S+)/g
+      const statusRe = /status:(!?)(\S+)/g
+      const result = projectRe.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
         if (allProjects) {
@@ -40,6 +44,15 @@ function TicketWidget({
           if (project) {
             tempFilters = {...tempFilters, projects: [project!.id]}
           }
+        }
+      }
+      const statusResult = statusRe.exec(searchTerm)
+      if (statusResult) {
+        // Powersearch on status done or not done
+        const negation = statusResult[1] === '!'
+        const status = statusResult[2].toLowerCase()
+        if (status !== 'done') {
+          tempFilters = {...tempFilters, status: {exclude: negation, name: status}}
         }
       }
     }
@@ -57,6 +70,13 @@ function TicketWidget({
           isFiltered = tempFilters.projects.includes(ticket.id)
         } else {
           isFiltered = tempFilters.projects.includes(ticket.project)
+        }
+      }
+      if (tempFilters && tempFilters.status) {
+        if (!ticket.isProject) {
+          isFiltered = tempFilters.status.exclude
+            ? ticket.status_extra_info.name.toLowerCase() !== tempFilters.status.name
+            : ticket.status_extra_info.name.toLowerCase() === tempFilters.status.name
         }
       }
       return isFiltered
