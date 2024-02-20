@@ -65,14 +65,14 @@ function TicketWidget({
           isFiltered = filters.projects.includes(ticket.project)
         }
       }
-      if (tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
+      if (isFiltered && tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
         if (ticket.isProject) {
           isFiltered = tempFilters.projects.includes(ticket.id)
         } else {
           isFiltered = tempFilters.projects.includes(ticket.project)
         }
       }
-      if (tempFilters && tempFilters.status) {
+      if (isFiltered && tempFilters && tempFilters.status) {
         if (!ticket.isProject) {
           isFiltered = tempFilters.status.exclude
             ? ticket.status_extra_info.name.toLowerCase() !== tempFilters.status.name
