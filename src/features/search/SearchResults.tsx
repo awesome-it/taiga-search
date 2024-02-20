@@ -30,14 +30,25 @@ function SearchResults({searchTerm}: {searchTerm: string}) {
   const taigaQueries = useTaigaQueries()
 
   const cleanedSearchTerm = useMemo(() => {
-    const re = /project:(\S+)/g
-    const result = re.exec(searchTerm)
+    const projectRe = /project:(\S+)/g
+    const statusRe = /status:(!?)(\S+)/g
+    const result = projectRe.exec(searchTerm)
+    let search = searchTerm
     if (result) {
       // Powersearch that filters for a project
-      const search = searchTerm.replace(result[0], '').trim()
-      return search.trim()
+      search = searchTerm.replace(result[0], '').trim()
     }
-    return searchTerm
+    const statusResult = statusRe.exec(search)
+    if (statusResult) {
+      // Powersearch on status done or not done
+      search = search.replace(statusResult[0], '').trim()
+      const negation = statusResult[1] === '!'
+      const status = statusResult[2]
+      if (status === 'done') {
+        search = `${search}&status__is_closed=${!negation}`
+      }
+    }
+    return search
   }, [searchTerm])
 
   const {data: allTickets, ...searchQuery} = taigaQueries.useSearchAllTicketsQueries({searchTerm: cleanedSearchTerm})
