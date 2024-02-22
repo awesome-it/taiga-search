@@ -37,7 +37,7 @@ export const useSearchAllTicketsQueries = ({
     (): Promise<UserStory[]> => searchUserStories(searchTerm),
     [searchTerm, searchUserStories],
   )
-  const enabled = useMemo(() => !!searchTerm && !!user && givenEnabled, [searchTerm, user, givenEnabled])
+  const enabled = useMemo(() => !!user && givenEnabled, [user, givenEnabled])
   return useQueries({
     queries: [
       {
