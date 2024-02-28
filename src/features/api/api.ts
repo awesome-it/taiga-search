@@ -4,6 +4,12 @@ import {Issue, Project, Task, User, UserStory} from '../../types/taiga.ts'
 const useApi = () => {
   const auth = useAuth()
   const token = auth.user?.access_token
+
+  if (!token) {
+    // If no access_token is present at this point it seems like there was a problem with the token refresh
+    // to silently resolve this remove the user from the auth object. This triggers reauthentication.
+    auth.removeUser()
+  }
   async function useFetchWithPath(path: string) {
     const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}${path}`, {
       headers: {
