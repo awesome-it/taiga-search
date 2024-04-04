@@ -7,16 +7,17 @@ import {AuthProvider} from 'react-oidc-context'
 import {WebStorageStateStore} from 'oidc-client-ts'
 import SignIn from './features/signin/SignIn.tsx'
 import TaigaUserManager from './features/helpers/TaigaUserManager.tsx'
+import {ApiSignIn} from './features/signin/ApiSignIn.tsx'
 
 const router = createBrowserRouter(
   [
     {
       path: '/',
-      element: <SignIn />,
+      element: import.meta.env.VITE_TAIGA_API_LOGIN ? <ApiSignIn /> : <SignIn />,
     },
     {
       path: '/:searchTerm',
-      element: <SignIn />,
+      element: import.meta.env.VITE_TAIGA_API_LOGIN ? <ApiSignIn /> : <SignIn />,
     },
   ],
   {
