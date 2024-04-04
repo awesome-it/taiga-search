@@ -1,5 +1,6 @@
-import {Alert, Box, Button, CircularProgress, Paper, TextField, Typography} from '@mui/material'
 import {FormEventHandler, useState} from 'react'
+import Alert from '@mui/material/Alert'
+import {Box, Button, CircularProgress, Paper, TextField, Typography} from '@mui/material'
 import {User} from '../../types/taiga.ts'
 import useAuth from '../auth/authWrapper.ts'
 import App from '../../App.tsx'
