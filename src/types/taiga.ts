@@ -218,3 +218,13 @@ export type User = {
   username: string
   uuid: string
 }
+
+export type Status = {
+  color: string
+  id: number
+  is_closed: boolean
+  name: string
+  order: number
+  project: number
+  slug: string
+}

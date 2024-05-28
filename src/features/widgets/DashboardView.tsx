@@ -1,8 +1,10 @@
 import {Stack, Tab, useMediaQuery, useTheme} from '@mui/material'
 import {TabContext, TabList, TabPanel, TabPanelProps} from '@mui/lab'
 import {SyntheticEvent, useCallback, useMemo, useState} from 'react'
+import {useParams} from 'react-router-dom'
 import TicketWidget from './TicketWidget.tsx'
 import useTaigaQueries from '../queries/queries.ts'
+import {useFilters} from '../filter/FilterProvider.tsx'
 
 const CustomTabPanel = ({children, value, currentValue, ...props}: {currentValue?: string} & TabPanelProps) => (
   <TabPanel
@@ -22,29 +24,38 @@ export default function DashboardView() {
   const taigaQueries = useTaigaQueries()
   const theme = useTheme()
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
+  const {searchTerm} = useParams()
+  const filters = useFilters()
+  let search = searchTerm ?? ''
+
+  if (filters.doneTickets) {
+    search = `${search}&status__is_closed=false`
+  }
 
   const {data: user} = taigaQueries.useUserQuery()
-  const {data: allTickets, isLoading} = taigaQueries.useAllTicketsQueries()
+  const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries({searchTerm: search})
 
   const widgets = useMemo(
     () => ({
       assignedTo: {
         label: 'My Tickets',
-        tickets: allTickets.filter(ticket => !!user && ticket.assigned_to === user.id),
+        tickets: allTickets.filter(ticket => !!user && !ticket.isProject && ticket.assigned_to === user.id),
       },
       watched: {
         label: 'Watched Tickets',
-        tickets: allTickets.filter(ticket => ticket.is_watcher),
+        tickets: allTickets.filter(ticket => !ticket.isProject && ticket.is_watcher),
       },
       unassigned: {
         label: 'Unassigned Tickets',
-        tickets: allTickets.filter(ticket => !ticket.assigned_to),
+        tickets: allTickets.filter(ticket => !ticket.isProject && !ticket.assigned_to),
       },
       withDeadline: {
         label: 'Tickets with Deadline',
         tickets: allTickets
-          .filter(ticket => ticket.due_date)
-          .sort((a, b) => (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0)),
+          .filter(ticket => !ticket.isProject && ticket.due_date)
+          .sort((a, b) =>
+            !a.isProject && !b.isProject ? (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0) : 0,
+          ),
       },
     }),
     [allTickets, user],

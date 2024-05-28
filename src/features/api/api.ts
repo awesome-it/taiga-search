@@ -1,4 +1,4 @@
-import {Issue, Project, Task, User, UserStory} from '../../types/taiga.ts'
+import {Issue, Project, Status, Task, User, UserStory} from '../../types/taiga.ts'
 import useAuth from '../auth/authWrapper.ts'
 
 const useApi = () => {
@@ -31,6 +31,10 @@ const useApi = () => {
     getAllTasks: async (): Promise<Task[]> => useFetchWithPath('/tasks?status__is_closed=false'),
     getAllIssues: async (): Promise<Issue[]> => useFetchWithPath('/issues?status__is_closed=false'),
     getAllProjects: async (): Promise<Project[]> => useFetchWithPath('/projects'),
+    getAllUsers: async (): Promise<User[]> => useFetchWithPath('/users'),
+    getIssueStatuses: async (): Promise<Status[]> => useFetchWithPath('/issue-statuses'),
+    getTaskStatuses: async (): Promise<Status[]> => useFetchWithPath('/task-statuses'),
+    getUserStoryStatuses: async (): Promise<Status[]> => useFetchWithPath('/userstory-statuses'),
     searchIssues: async (searchTerm: string): Promise<Issue[]> => useFetchWithPath(`/issues?q=${searchTerm}`),
     searchProjects: async (searchTerm: string): Promise<Project[]> => useFetchWithPath(`/projects?q=${searchTerm}`),
     searchTasks: async (searchTerm: string): Promise<Task[]> => useFetchWithPath(`/tasks?q=${searchTerm}`),

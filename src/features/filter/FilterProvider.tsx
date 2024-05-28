@@ -1,7 +1,13 @@
 import React, {createContext, ReactNode, useContext, useState} from 'react'
 
-type FilterData = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface FilterDataInterface extends Record<string, any> {}
+
+type FilterData = FilterDataInterface & {
   projects?: number[]
+  doneTickets?: boolean
+  assignees?: number[]
+  statuses?: string[]
 }
 
 const FilterContext = createContext({} as FilterData)
