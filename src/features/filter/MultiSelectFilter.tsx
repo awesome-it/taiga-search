@@ -1,6 +1,6 @@
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {CheckBox, CheckBoxOutlineBlank} from '@mui/icons-material'
-import {Autocomplete, Checkbox, TextField} from '@mui/material'
+import {Autocomplete, Checkbox, TextField, useMediaQuery, useTheme} from '@mui/material'
 import {useFilters, useFiltersDispatch} from './FilterProvider.tsx'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,6 +17,8 @@ function MultiSelectFilter<Type extends Record<string, any>>({
   optionAttribute: string
   valueAttribute?: string
 }) {
+  const theme = useTheme()
+  const smallView = useMediaQuery(theme.breakpoints.down('md'))
   const [filter, setFilter] = useState<Type[]>([])
   const filters = useFilters()
   const setFilters = useFiltersDispatch()
@@ -54,7 +56,7 @@ function MultiSelectFilter<Type extends Record<string, any>>({
       multiple
       fullWidth
       options={data}
-      limitTags={1}
+      limitTags={smallView ? 1 : 3}
       value={filter}
       disableCloseOnSelect
       onChange={handleChange}

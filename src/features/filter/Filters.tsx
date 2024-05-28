@@ -140,7 +140,7 @@ function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: bool
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)}>Done</Button>
+        <Button onClick={() => setOpen(false)}>Close</Button>
       </DialogActions>
     </Dialog>
   )
