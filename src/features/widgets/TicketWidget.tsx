@@ -29,11 +29,13 @@ function TicketWidget({
     let tempFilters = {} as {
       projects?: number[]
       status?: {exclude: boolean; name: string}
+      assignee?: {exclude: boolean; name: string}
     }
 
     if (searchTerm) {
       const projectRe = /project:(\S+)/g
       const statusRe = /status:(!?)(".+"|\S+)/g
+      const assigneeRe = /assignee:(!?)(".+"|\S+)/g
       const result = projectRe.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
@@ -55,6 +57,13 @@ function TicketWidget({
           tempFilters = {...tempFilters, status: {exclude: negation, name: status}}
         }
       }
+      const assigneeResult = assigneeRe.exec(searchTerm)
+      if (assigneeResult) {
+        // Powersearch on assignee
+        const negation = assigneeResult[1] === '!'
+        const assignee = assigneeResult[2].toLowerCase().replace(/"/g, '')
+        tempFilters = {...tempFilters, assignee: {exclude: negation, name: assignee}}
+      }
     }
     return tickets.filter(ticket => {
       let isFiltered = true
@@ -63,6 +72,16 @@ function TicketWidget({
           isFiltered = filters.projects.includes(ticket.id)
         } else {
           isFiltered = filters.projects.includes(ticket.project)
+        }
+      }
+      if (isFiltered && filters && filters.assignees && filters.assignees.length > 0) {
+        if (!ticket.isProject) {
+          isFiltered = filters.assignees.includes(ticket.assigned_to)
+        }
+      }
+      if (isFiltered && filters && filters.statuses && filters.statuses.length > 0) {
+        if (!ticket.isProject) {
+          isFiltered = filters.statuses.includes(ticket.status_extra_info.name)
         }
       }
       if (isFiltered && tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
@@ -77,6 +96,14 @@ function TicketWidget({
           isFiltered = tempFilters.status.exclude
             ? ticket.status_extra_info.name.toLowerCase() !== tempFilters.status.name
             : ticket.status_extra_info.name.toLowerCase() === tempFilters.status.name
+        }
+      }
+      if (isFiltered && tempFilters && tempFilters.assignee) {
+        if (!ticket.isProject) {
+          isFiltered = tempFilters.assignee.exclude
+            ? !ticket.assigned_to_extra_info ||
+              ticket.assigned_to_extra_info.full_name_display.toLowerCase() !== tempFilters.assignee.name
+            : ticket.assigned_to_extra_info?.full_name_display.toLowerCase() === tempFilters.assignee.name
         }
       }
       return isFiltered
