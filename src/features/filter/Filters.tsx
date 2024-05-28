@@ -8,7 +8,10 @@ import {
   DialogContentText,
   DialogTitle,
   FormControlLabel,
-  Paper,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -81,9 +84,45 @@ function DoneTicketsCheckbox() {
   )
 }
 
-function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: boolean) => void}) {
-  const [showPowerSearch, setShowPowerSearch] = useState(false)
+function PowerSearchHint() {
+  return (
+    <Typography component="span" style={{whiteSpace: 'nowrap'}}>
+      <strong>Power search</strong> allows you to search for tickets using the following syntax:
+      <ul>
+        <li>
+          project:<code>project_name</code>
+        </li>
+        <li>
+          status:<code>status</code>
+        </li>
+        <li>
+          status<code>!status</code>
+        </li>
+        <li>
+          assignee:<code>assignee_name</code>
+        </li>
+        <li>
+          assignee:<code>!assignee_name</code>
+        </li>
+      </ul>
+      <span style={{whiteSpace: 'nowrap'}}>
+        For example: <code>project:MyProject my search text</code>
+      </span>
+      <br />
+      The position of the searchterm in relation to the powersearch options does not matter.
+    </Typography>
+  )
+}
 
+const TooltipImpl = styled(({className, ...props}: TooltipProps) => (
+  <Tooltip {...props} classes={{popper: className}} />
+))({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: 'none',
+  },
+})
+
+function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: boolean) => void}) {
   const handleClose = () => {
     setOpen(false)
   }
@@ -94,50 +133,17 @@ function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: bool
       <DialogContent dividers>
         <DialogContentText>
           These filters will be persisted in the browser. If you want a non-persistent filter try the{' '}
-          <Typography
-            sx={{textDecoration: 'underline', cursor: 'pointer'}}
-            component="span"
-            onClick={() => {
-              setShowPowerSearch(oldState => !oldState)
-            }}
-          >
-            power search
-          </Typography>
+          <TooltipImpl title={<PowerSearchHint />}>
+            <Typography sx={{textDecoration: 'underline', cursor: 'pointer'}} component="span">
+              power search
+            </Typography>
+          </TooltipImpl>
           .
         </DialogContentText>
-        {showPowerSearch && (
-          <Paper sx={{p: 1}}>
-            <strong>Power search</strong> allows you to search for tickets using the following syntax:
-            <ul>
-              <li>
-                project:<code>project_name</code>
-              </li>
-              <li>
-                status:<code>status</code>
-              </li>
-              <li>
-                status<code>!status</code>
-              </li>
-              <li>
-                assignee:<code>assignee_name</code>
-              </li>
-              <li>
-                assignee:<code>!assignee_name</code>
-              </li>
-            </ul>
-            For example: <code>project:MyProject my search text</code>
-            <br />
-            The position of the searchterm in relation to the powersearch options does not matter.
-          </Paper>
-        )}
-        {!showPowerSearch && (
-          <>
-            <ProjectsFilter />
-            <AssigneesFilter />
-            <StatusesFilter />
-            <DoneTicketsCheckbox />
-          </>
-        )}
+        <ProjectsFilter />
+        <AssigneesFilter />
+        <StatusesFilter />
+        <DoneTicketsCheckbox />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setOpen(false)}>Close</Button>
