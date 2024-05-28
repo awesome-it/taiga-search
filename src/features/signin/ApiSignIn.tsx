@@ -1,6 +1,7 @@
 import {FormEventHandler, useState} from 'react'
 import Alert from '@mui/material/Alert'
-import {Box, Button, CircularProgress, Paper, TextField, Typography} from '@mui/material'
+import {Box, Dialog, DialogContent, TextField, Typography} from '@mui/material'
+import {LoadingButton} from '@mui/lab'
 import {User} from '../../types/taiga.ts'
 import useAuth from '../auth/authWrapper.ts'
 import App from '../../App.tsx'
@@ -49,32 +50,31 @@ export function ApiSignIn() {
   return token ? (
     <App />
   ) : (
-    <Box
-      component="form"
-      onSubmit={submitHandler}
-      display="flex"
-      flexDirection="column"
-      flexGrow={1}
-      sx={{minHeight: '0px'}}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Paper elevation={10} sx={{display: 'flex', flexDirection: 'column', gap: 2, p: 5}}>
-        <Typography variant="h4" component="h1">
-          Login to Taiga
-        </Typography>
-        {loginError && <Alert color="error">{loginError}</Alert>}
-        <TextField name="username" label="Username" />
-        <TextField name="password" label="Password" type="password" />
-        <Button
-          type="submit"
-          disabled={isLoading}
-          endIcon={isLoading ? <CircularProgress /> : null}
-          variant="contained"
+    <Dialog open={!token} fullWidth maxWidth="sm">
+      <DialogContent>
+        <Box
+          component="form"
+          onSubmit={submitHandler}
+          display="flex"
+          flexDirection="column"
+          flexGrow={1}
+          gap={2}
+          p={5}
+          sx={{minHeight: '0px'}}
+          alignItems="stretch"
+          justifyContent="center"
         >
-          Sign In
-        </Button>
-      </Paper>
-    </Box>
+          <Typography align="center" variant="h4" component="h1">
+            Login to Taiga
+          </Typography>
+          {loginError && <Alert color="error">{loginError}</Alert>}
+          <TextField name="username" label="Username" />
+          <TextField name="password" label="Password" type="password" />
+          <LoadingButton type="submit" fullWidth loading={isLoading} variant="contained">
+            Sign In
+          </LoadingButton>
+        </Box>
+      </DialogContent>
+    </Dialog>
   )
 }
