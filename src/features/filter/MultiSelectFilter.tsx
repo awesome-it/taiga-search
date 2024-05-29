@@ -1,7 +1,7 @@
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {CheckBox, CheckBoxOutlineBlank} from '@mui/icons-material'
 import {Autocomplete, Checkbox, TextField, useMediaQuery, useTheme} from '@mui/material'
-import {useFilters, useFiltersDispatch} from './FilterProvider.tsx'
+import {useTemporaryFilters, useTemporaryFiltersDispatch} from './FilterProvider.tsx'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function MultiSelectFilter<Type extends Record<string, any>>({
@@ -20,8 +20,8 @@ function MultiSelectFilter<Type extends Record<string, any>>({
   const theme = useTheme()
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
   const [filter, setFilter] = useState<Type[]>([])
-  const filters = useFilters()
-  const setFilters = useFiltersDispatch()
+  const filters = useTemporaryFilters()
+  const setFilters = useTemporaryFiltersDispatch()
 
   const icon = <CheckBoxOutlineBlank fontSize="small" />
   const checkedIcon = <CheckBox fontSize="small" />
@@ -35,7 +35,6 @@ function MultiSelectFilter<Type extends Record<string, any>>({
         }),
       }
     })
-    localStorage.setItem('filterData', JSON.stringify({...filters, [filterKey]: value}))
   }
 
   useEffect(() => {
