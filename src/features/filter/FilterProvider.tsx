@@ -12,13 +12,21 @@ type FilterData = FilterDataInterface & {
 
 const FilterContext = createContext({} as FilterData)
 const FilterDispatchContext = createContext<React.Dispatch<React.SetStateAction<FilterData>>>(() => {})
+const TemporaryFilterContext = createContext({} as FilterData)
+const TemporaryFilterDispatchContext = createContext<React.Dispatch<React.SetStateAction<FilterData>>>(() => {})
+
 function FilterProvider({children}: {children: ReactNode}) {
   const sessionFilterData = localStorage.getItem('filterData') ?? '{}'
   const [filterData, setFilterData] = useState(JSON.parse(sessionFilterData) as FilterData)
+  const [temporaryFilterData, setTemporaryFilterData] = useState(filterData)
 
   return (
     <FilterContext.Provider value={filterData}>
-      <FilterDispatchContext.Provider value={setFilterData}>{children}</FilterDispatchContext.Provider>
+      <TemporaryFilterContext.Provider value={temporaryFilterData}>
+        <TemporaryFilterDispatchContext.Provider value={setTemporaryFilterData}>
+          <FilterDispatchContext.Provider value={setFilterData}>{children}</FilterDispatchContext.Provider>
+        </TemporaryFilterDispatchContext.Provider>
+      </TemporaryFilterContext.Provider>
     </FilterContext.Provider>
   )
 }
@@ -29,6 +37,14 @@ export function useFilters() {
 
 export function useFiltersDispatch() {
   return useContext(FilterDispatchContext)
+}
+
+export function useTemporaryFilters() {
+  return useContext(TemporaryFilterContext)
+}
+
+export function useTemporaryFiltersDispatch() {
+  return useContext(TemporaryFilterDispatchContext)
 }
 
 export default FilterProvider

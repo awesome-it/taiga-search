@@ -15,10 +15,10 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import {SyntheticEvent, useMemo, useState} from 'react'
+import {SyntheticEvent, useCallback, useMemo, useState} from 'react'
 import {FilterList} from '@mui/icons-material'
 import useTaigaQueries from '../queries/queries.ts'
-import {useFilters, useFiltersDispatch} from './FilterProvider.tsx'
+import {useFilters, useFiltersDispatch, useTemporaryFilters, useTemporaryFiltersDispatch} from './FilterProvider.tsx'
 import {Project, Status, User} from '../../types/taiga.ts'
 import MultiSelectFilter from './MultiSelectFilter.tsx'
 
@@ -61,8 +61,8 @@ function AssigneesFilter() {
 }
 
 function DoneTicketsCheckbox() {
-  const filters = useFilters()
-  const setFilters = useFiltersDispatch()
+  const filters = useTemporaryFilters()
+  const setFilters = useTemporaryFiltersDispatch()
 
   const handleChange = (_event: SyntheticEvent, checked: boolean) => {
     setFilters(oldFilters => {
@@ -71,7 +71,6 @@ function DoneTicketsCheckbox() {
         doneTickets: checked,
       }
     })
-    localStorage.setItem('filterData', JSON.stringify({...filters, doneTickets: checked}))
   }
 
   return (
@@ -123,9 +122,30 @@ const TooltipImpl = styled(({className, ...props}: TooltipProps) => (
 })
 
 function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: boolean) => void}) {
-  const handleClose = () => {
+  const setTemporaryFilters = useTemporaryFiltersDispatch()
+  const setFilters = useFiltersDispatch()
+  const filters = useFilters()
+  const temporaryFilters = useTemporaryFilters()
+
+  const handleClose = useCallback(() => {
     setOpen(false)
-  }
+  }, [setOpen])
+
+  const handleAbort = useCallback(() => {
+    setTemporaryFilters(filters)
+    handleClose()
+  }, [filters, handleClose, setTemporaryFilters])
+
+  const handleApply = useCallback(() => {
+    setFilters(temporaryFilters)
+    localStorage.setItem('filterData', JSON.stringify({...temporaryFilters}))
+    handleClose()
+  }, [handleClose, setFilters, temporaryFilters])
+
+  const handleClear = useCallback(() => {
+    setFilters({})
+    handleClose()
+  }, [setFilters, handleClose])
 
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
@@ -146,7 +166,15 @@ function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: bool
         <DoneTicketsCheckbox />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)}>Close</Button>
+        <Button onClick={handleApply} variant="contained" color="primary">
+          Apply
+        </Button>
+        <Button onClick={handleClear} variant="outlined" color="secondary">
+          Clear All
+        </Button>
+        <Button onClick={handleAbort} variant="outlined">
+          Abort
+        </Button>
       </DialogActions>
     </Dialog>
   )
@@ -156,6 +184,7 @@ function Filters() {
   const [isOpen, setIsOpen] = useState(false)
   const theme = useTheme()
   const filters = useFilters()
+  const setTemporaryFilters = useTemporaryFiltersDispatch()
 
   const filtersCount = useMemo(() => {
     let count = 0
@@ -181,6 +210,7 @@ function Filters() {
           ) : null
         }
         onClick={() => {
+          setTemporaryFilters(filters)
           setIsOpen(true)
         }}
       >
