@@ -1,4 +1,4 @@
-import {Box, Paper, Theme, Typography, useTheme} from '@mui/material'
+import {Box, Chip, Paper, Theme, Typography, useTheme} from '@mui/material'
 import {useMemo} from 'react'
 import {useParams} from 'react-router-dom'
 import {SxProps} from '@mui/system'
@@ -11,11 +11,15 @@ function TicketWidget({
   tickets,
   title,
   isLoading = false,
+  givenTicketCount,
+  previousTicketCount,
   sx,
   children,
 }: React.PropsWithChildren<{
   tickets: (UserStory | Issue | Task | Project)[]
   isLoading?: boolean
+  givenTicketCount?: number
+  previousTicketCount?: number
   title?: string
   sx?: SxProps<Theme>
 }>) {
@@ -132,6 +136,19 @@ function TicketWidget({
           }}
         >
           {title}
+          {!givenTicketCount ? (
+            <Chip sx={{ml: 1}} color="primary" label={filteredTickets.length} size="small" />
+          ) : (
+            <Chip sx={{ml: 1}} color="primary" label={givenTicketCount} size="small" />
+          )}
+          {givenTicketCount && previousTicketCount && givenTicketCount - previousTicketCount !== 0 && (
+            <Chip
+              sx={{ml: 1}}
+              color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
+              label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
+              size="small"
+            />
+          )}
         </Typography>
       )}
       <Box
