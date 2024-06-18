@@ -126,13 +126,17 @@ function TicketWidget({
             color: 'text.secondary',
             position: 'absolute',
             left: theme.spacing(1),
-            top: theme.spacing(-1),
+            top: theme.spacing(-1.5),
             p: 0,
             py: 0,
             px: 0.5,
             margin: 0,
             backgroundColor: 'white',
             zIndex: theme.zIndex.appBar,
+
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
           }}
         >
           {title}
