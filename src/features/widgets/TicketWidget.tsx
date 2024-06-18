@@ -1,4 +1,4 @@
-import {Box, Paper, Theme, Typography, useTheme} from '@mui/material'
+import {Box, Chip, Paper, Theme, Tooltip, Typography, useTheme} from '@mui/material'
 import {useMemo} from 'react'
 import {useParams} from 'react-router-dom'
 import {SxProps} from '@mui/system'
@@ -11,11 +11,15 @@ function TicketWidget({
   tickets,
   title,
   isLoading = false,
+  givenTicketCount,
+  previousTicketCount,
   sx,
   children,
 }: React.PropsWithChildren<{
   tickets: (UserStory | Issue | Task | Project)[]
   isLoading?: boolean
+  givenTicketCount?: number
+  previousTicketCount?: number
   title?: string
   sx?: SxProps<Theme>
 }>) {
@@ -29,11 +33,13 @@ function TicketWidget({
     let tempFilters = {} as {
       projects?: number[]
       status?: {exclude: boolean; name: string}
+      assignee?: {exclude: boolean; name: string}
     }
 
     if (searchTerm) {
       const projectRe = /project:(\S+)/g
       const statusRe = /status:(!?)(".+"|\S+)/g
+      const assigneeRe = /assignee:(!?)(".+"|\S+)/g
       const result = projectRe.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
@@ -55,6 +61,13 @@ function TicketWidget({
           tempFilters = {...tempFilters, status: {exclude: negation, name: status}}
         }
       }
+      const assigneeResult = assigneeRe.exec(searchTerm)
+      if (assigneeResult) {
+        // Powersearch on assignee
+        const negation = assigneeResult[1] === '!'
+        const assignee = assigneeResult[2].toLowerCase().replace(/"/g, '')
+        tempFilters = {...tempFilters, assignee: {exclude: negation, name: assignee}}
+      }
     }
     return tickets.filter(ticket => {
       let isFiltered = true
@@ -63,6 +76,16 @@ function TicketWidget({
           isFiltered = filters.projects.includes(ticket.id)
         } else {
           isFiltered = filters.projects.includes(ticket.project)
+        }
+      }
+      if (isFiltered && filters && filters.assignees && filters.assignees.length > 0) {
+        if (!ticket.isProject) {
+          isFiltered = filters.assignees.includes(ticket.assigned_to)
+        }
+      }
+      if (isFiltered && filters && filters.statuses && filters.statuses.length > 0) {
+        if (!ticket.isProject) {
+          isFiltered = filters.statuses.includes(ticket.status_extra_info.name)
         }
       }
       if (isFiltered && tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
@@ -77,6 +100,14 @@ function TicketWidget({
           isFiltered = tempFilters.status.exclude
             ? ticket.status_extra_info.name.toLowerCase() !== tempFilters.status.name
             : ticket.status_extra_info.name.toLowerCase() === tempFilters.status.name
+        }
+      }
+      if (isFiltered && tempFilters && tempFilters.assignee) {
+        if (!ticket.isProject) {
+          isFiltered = tempFilters.assignee.exclude
+            ? !ticket.assigned_to_extra_info ||
+              ticket.assigned_to_extra_info.full_name_display.toLowerCase() !== tempFilters.assignee.name
+            : ticket.assigned_to_extra_info?.full_name_display.toLowerCase() === tempFilters.assignee.name
         }
       }
       return isFiltered
@@ -95,16 +126,53 @@ function TicketWidget({
             color: 'text.secondary',
             position: 'absolute',
             left: theme.spacing(1),
-            top: theme.spacing(-1),
+            top: theme.spacing(-1.5),
             p: 0,
             py: 0,
             px: 0.5,
             margin: 0,
             backgroundColor: 'white',
             zIndex: theme.zIndex.appBar,
+
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
           }}
         >
           {title}
+          {!givenTicketCount ? (
+            <Chip sx={{ml: 1}} color="primary" label={filteredTickets.length} size="small" />
+          ) : (
+            <Tooltip
+              title={
+                filteredTickets.length !== givenTicketCount &&
+                `Filter matches ${filteredTickets.length} of ${givenTicketCount} tickets`
+              }
+            >
+              <Chip
+                sx={{ml: 1}}
+                color="primary"
+                label={`${filteredTickets.length !== givenTicketCount ? `${filteredTickets.length} / ` : ''}${givenTicketCount}`}
+                size="small"
+              />
+            </Tooltip>
+          )}
+          {givenTicketCount && previousTicketCount && givenTicketCount - previousTicketCount !== 0 && (
+            <Tooltip
+              title={
+                givenTicketCount < previousTicketCount
+                  ? `${previousTicketCount - givenTicketCount} less tickets than at last visit`
+                  : `${givenTicketCount - previousTicketCount} more tickets than at last visit`
+              }
+            >
+              <Chip
+                sx={{ml: 1}}
+                color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
+                label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
+                size="small"
+              />
+            </Tooltip>
+          )}
         </Typography>
       )}
       <Box

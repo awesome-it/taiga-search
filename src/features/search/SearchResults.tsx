@@ -4,6 +4,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'
 import {Issue, UserStory, Task, Project} from '../../types/taiga.ts'
+import {useFilters} from '../filter/FilterProvider.tsx'
 
 const sortByProject = (a: Issue | UserStory | Task | Project, b: Issue | UserStory | Task | Project) => {
   if (a.ticketType === 'project' && b.ticketType !== 'project') {
@@ -28,10 +29,12 @@ const ReturnToDashboardLink = () => {
 
 function SearchResults({searchTerm}: {searchTerm: string}) {
   const taigaQueries = useTaigaQueries()
+  const filters = useFilters()
 
   const cleanedSearchTerm = useMemo(() => {
     const projectRe = /project:(\S+)/g
     const statusRe = /status:(!?)(".+"|\S+)/g
+    const assigneeRe = /assignee:(!?)(".+"|\S+)/g
     const result = projectRe.exec(searchTerm)
     let search = searchTerm
     if (result) {
@@ -48,8 +51,18 @@ function SearchResults({searchTerm}: {searchTerm: string}) {
         search = `${search}&status__is_closed=${!negation}`
       }
     }
+    const assigneeResult = assigneeRe.exec(search)
+    if (assigneeResult) {
+      // Powersearch on assignee
+      search = search.replace(assigneeResult[0], '').trim()
+    }
+    if (filters.doneTickets) {
+      if (!search.includes('status__is_closed')) {
+        search = `${search}&status__is_closed=false`
+      }
+    }
     return search
-  }, [searchTerm])
+  }, [filters, searchTerm])
 
   const {data: allTickets, ...searchQuery} = taigaQueries.useSearchAllTicketsQueries({searchTerm: cleanedSearchTerm})
   const sortedTickets = useMemo(() => allTickets.sort(sortByProject), [allTickets])

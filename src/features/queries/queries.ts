@@ -1,16 +1,17 @@
 import {useQueries, useQuery} from '@tanstack/react-query'
 import {useCallback, useMemo} from 'react'
 import useApi from '../api/api.ts'
-import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
+import {Issue, Project, Status, Task, UserStory} from '../../types/taiga.ts'
 
-export const useUserQuery = () => {
+const useUserQuery = () => {
   const {getUserData} = useApi()
   return useQuery({
     queryKey: ['user'],
     queryFn: getUserData,
   })
 }
-export const useProjectQuery = () => {
+
+const useProjectQuery = () => {
   const {getAllProjects} = useApi()
   return useQuery({
     queryKey: ['projects'],
@@ -18,7 +19,54 @@ export const useProjectQuery = () => {
   })
 }
 
-export const useSearchAllTicketsQueries = ({
+const useAllUsersQuery = () => {
+  const {getAllUsers} = useApi()
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: getAllUsers,
+  })
+}
+
+const useAllStatusesQuery = () => {
+  const {getIssueStatuses, getTaskStatuses, getUserStoryStatuses} = useApi()
+  return useQueries({
+    queries: [
+      {
+        queryKey: ['issueStatuses'],
+        queryFn: getIssueStatuses,
+      },
+      {
+        queryKey: ['taskStatuses'],
+        queryFn: getTaskStatuses,
+      },
+      {
+        queryKey: ['userStoryStatuses'],
+        queryFn: getUserStoryStatuses,
+      },
+    ],
+    combine: results => {
+      return {
+        data: results
+          .map(result => result.data)
+          .reduce((a: Status[], b) => {
+            if (b) {
+              a.push(...b)
+            }
+            return a
+          }, [] as Status[])
+          .filter((value, index, array) => {
+            const names = array.map(status => status.name)
+            return names.indexOf(value.name) === index
+          }),
+        isLoading: results.some(result => result.isLoading),
+        isError: results.some(result => result.isError),
+        isSuccess: results.every(result => result.isSuccess),
+      }
+    },
+  })
+}
+
+const useSearchAllTicketsQueries = ({
   searchTerm,
   enabled: givenEnabled = true,
 }: {
@@ -114,7 +162,7 @@ export const useSearchAllTicketsQueries = ({
   })
 }
 
-export const useAllTicketsQueries = ({enabled: givenEnabled}: {enabled?: boolean} = {enabled: true}) => {
+const useAllTicketsQueries = ({enabled: givenEnabled}: {enabled?: boolean} = {enabled: true}) => {
   const {getAllUserStories, getAllTasks, getAllIssues} = useApi()
   const {data: user} = useUserQuery()
   const enabled = useMemo(() => !!user && givenEnabled, [user, givenEnabled])
@@ -185,7 +233,9 @@ const useTaigaQueries = () => {
   return {
     useUserQuery,
     useProjectQuery,
+    useAllStatusesQuery,
     useAllTicketsQueries,
+    useAllUsersQuery,
     useSearchAllTicketsQueries,
   }
 }
