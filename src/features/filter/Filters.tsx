@@ -173,7 +173,7 @@ function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: bool
           Clear All
         </Button>
         <Button onClick={handleAbort} variant="outlined">
-          Abort
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

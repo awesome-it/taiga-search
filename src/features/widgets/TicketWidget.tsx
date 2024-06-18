@@ -1,4 +1,4 @@
-import {Box, Chip, Paper, Theme, Typography, useTheme} from '@mui/material'
+import {Box, Chip, Paper, Theme, Tooltip, Typography, useTheme} from '@mui/material'
 import {useMemo} from 'react'
 import {useParams} from 'react-router-dom'
 import {SxProps} from '@mui/system'
@@ -139,15 +139,35 @@ function TicketWidget({
           {!givenTicketCount ? (
             <Chip sx={{ml: 1}} color="primary" label={filteredTickets.length} size="small" />
           ) : (
-            <Chip sx={{ml: 1}} color="primary" label={givenTicketCount} size="small" />
+            <Tooltip
+              title={
+                filteredTickets.length !== givenTicketCount &&
+                `Filter matches ${filteredTickets.length} of ${givenTicketCount} tickets`
+              }
+            >
+              <Chip
+                sx={{ml: 1}}
+                color="primary"
+                label={`${filteredTickets.length !== givenTicketCount ? `${filteredTickets.length} / ` : ''}${givenTicketCount}`}
+                size="small"
+              />
+            </Tooltip>
           )}
           {givenTicketCount && previousTicketCount && givenTicketCount - previousTicketCount !== 0 && (
-            <Chip
-              sx={{ml: 1}}
-              color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
-              label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
-              size="small"
-            />
+            <Tooltip
+              title={
+                givenTicketCount < previousTicketCount
+                  ? `${previousTicketCount - givenTicketCount} less tickets than at last visit`
+                  : `${givenTicketCount - previousTicketCount} more tickets than at last visit`
+              }
+            >
+              <Chip
+                sx={{ml: 1}}
+                color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
+                label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
+                size="small"
+              />
+            </Tooltip>
           )}
         </Typography>
       )}

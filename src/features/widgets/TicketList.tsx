@@ -153,14 +153,14 @@ function TicketList({
                     label={`Assigned to: ${ticket.assigned_to_extra_info?.full_name_display}`}
                     sx={{
                       mb: 1,
-                      ml: 2,
+                      ml: 1,
                     }}
                   />
                 )}
                 <Chip
                   label={`${ticket.status_extra_info.name}`}
                   sx={{
-                    ml: 2,
+                    ml: 1,
                     mb: 1,
                     bgcolor: ticket.status_extra_info.color,
                     color: theme.palette.getContrastText(ticket.status_extra_info.color),
