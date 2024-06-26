@@ -46,7 +46,7 @@ export default function DashboardView() {
   const filters = useFilters()
   let search = searchTerm ?? ''
 
-  if (filters.doneTickets) {
+  if (!filters.doneTickets) {
     search = `${search}&status__is_closed=false`
   }
 
