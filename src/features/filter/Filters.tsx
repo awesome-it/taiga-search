@@ -78,7 +78,7 @@ function DoneTicketsCheckbox() {
       control={
         <Checkbox checked={filters.doneTickets} onChange={handleChange} inputProps={{'aria-label': 'done tickets'}} />
       }
-      label="Hide Resolved Tickets"
+      label="Show Resolved Tickets"
     />
   )
 }
