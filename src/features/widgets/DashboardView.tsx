@@ -4,7 +4,6 @@ import {SyntheticEvent, useCallback, useEffect, useMemo, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import TicketWidget from './TicketWidget.tsx'
 import useTaigaQueries from '../queries/queries.ts'
-import {useFilters} from '../filter/FilterProvider.tsx'
 
 const CustomTabPanel = ({children, value, currentValue, ...props}: {currentValue?: string} & TabPanelProps) => (
   <TabPanel
@@ -43,12 +42,7 @@ export default function DashboardView() {
   const theme = useTheme()
   const smallView = useMediaQuery(theme.breakpoints.down('md'))
   const {searchTerm} = useParams()
-  const filters = useFilters()
-  let search = searchTerm ?? ''
-
-  if (!filters.doneTickets) {
-    search = `${search}&status__is_closed=false`
-  }
+  const search = searchTerm ?? ''
 
   const {data: user} = taigaQueries.useUserQuery()
   const {data: allTickets, isLoading} = taigaQueries.useSearchAllTicketsQueries({searchTerm: search})
