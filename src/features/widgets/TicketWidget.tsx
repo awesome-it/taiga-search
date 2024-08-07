@@ -88,6 +88,11 @@ function TicketWidget({
           isFiltered = filters.statuses.includes(ticket.status_extra_info.name)
         }
       }
+      if (isFiltered && filters && !filters.doneTickets) {
+        if (!ticket.isProject) {
+          isFiltered = !ticket.status_extra_info.is_closed
+        }
+      }
       if (isFiltered && tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
         if (ticket.isProject) {
           isFiltered = tempFilters.projects.includes(ticket.id)
@@ -157,18 +162,30 @@ function TicketWidget({
               />
             </Tooltip>
           )}
-          {givenTicketCount && previousTicketCount && givenTicketCount - previousTicketCount !== 0 && (
+          {givenTicketCount && previousTicketCount && (
             <Tooltip
               title={
-                givenTicketCount < previousTicketCount
-                  ? `${previousTicketCount - givenTicketCount} less tickets than at last visit`
-                  : `${givenTicketCount - previousTicketCount} more tickets than at last visit`
+                givenTicketCount !== previousTicketCount
+                  ? givenTicketCount < previousTicketCount
+                    ? `${previousTicketCount - givenTicketCount} tickets less than at last visit`
+                    : `${givenTicketCount - previousTicketCount} tickets more than at last visit`
+                  : 'Same amount of tickets as on last visit'
               }
             >
               <Chip
                 sx={{ml: 1}}
-                color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
-                label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
+                color={
+                  givenTicketCount !== previousTicketCount
+                    ? givenTicketCount < previousTicketCount
+                      ? 'success'
+                      : 'error'
+                    : 'warning'
+                }
+                label={
+                  givenTicketCount === previousTicketCount
+                    ? '0'
+                    : `${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`
+                }
                 size="small"
               />
             </Tooltip>
