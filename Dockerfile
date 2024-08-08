@@ -11,7 +11,7 @@ CMD [ "npm", "run", "dev" ]
 FROM base as prod-builder
 RUN npm run build
 
-FROM registry.awesome-it.de/upstream-dockerhub/library/nginx:1-alpine as prod
+FROM nginx:1-alpine as prod
 COPY --from=prod-builder /usr/src/app/dist/ /html
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 5173
