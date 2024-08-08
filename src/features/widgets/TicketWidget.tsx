@@ -31,24 +31,25 @@ function TicketWidget({
 
   const filteredTickets = useMemo(() => {
     let tempFilters = {} as {
-      projects?: number[]
+      projects?: {exclude: boolean; projects: number[]}
       status?: {exclude: boolean; name: string}
       assignee?: {exclude: boolean; name: string}
     }
 
     if (searchTerm) {
-      const projectRe = /project:(\S+)/g
+      const projectRe = /project:(!?)(\S+)/g
       const statusRe = /status:(!?)(".+"|\S+)/g
       const assigneeRe = /assignee:(!?)(".+"|\S+)/g
       const result = projectRe.exec(searchTerm)
       if (result) {
         // Powersearch that filters for a project
         if (allProjects) {
+          const negation = result[1] === '!'
           const project = allProjects.find(pro => {
-            return result[1].trim().toLowerCase() === pro.name.toLowerCase()
+            return result[2].trim().toLowerCase() === pro.name.toLowerCase()
           })
           if (project) {
-            tempFilters = {...tempFilters, projects: [project!.id]}
+            tempFilters = {...tempFilters, projects: {exclude: negation, projects: [project!.id]}}
           }
         }
       }
@@ -77,6 +78,9 @@ function TicketWidget({
         } else {
           isFiltered = filters.projects.includes(ticket.project)
         }
+        if (filters.projectsExclude) {
+          isFiltered = !isFiltered
+        }
       }
       if (isFiltered && filters && filters.assignees && filters.assignees.length > 0) {
         if (!ticket.isProject) {
@@ -88,11 +92,19 @@ function TicketWidget({
           isFiltered = filters.statuses.includes(ticket.status_extra_info.name)
         }
       }
-      if (isFiltered && tempFilters && tempFilters.projects && tempFilters.projects.length > 0) {
+      if (isFiltered && filters && !filters.doneTickets) {
+        if (!ticket.isProject) {
+          isFiltered = !ticket.status_extra_info.is_closed
+        }
+      }
+      if (isFiltered && tempFilters && tempFilters.projects) {
         if (ticket.isProject) {
-          isFiltered = tempFilters.projects.includes(ticket.id)
+          isFiltered = tempFilters.projects.projects.includes(ticket.id)
         } else {
-          isFiltered = tempFilters.projects.includes(ticket.project)
+          isFiltered = tempFilters.projects.projects.includes(ticket.project)
+        }
+        if (tempFilters.projects.exclude) {
+          isFiltered = !isFiltered
         }
       }
       if (isFiltered && tempFilters && tempFilters.status) {
@@ -157,18 +169,30 @@ function TicketWidget({
               />
             </Tooltip>
           )}
-          {givenTicketCount && previousTicketCount && givenTicketCount - previousTicketCount !== 0 && (
+          {givenTicketCount && previousTicketCount && (
             <Tooltip
               title={
-                givenTicketCount < previousTicketCount
-                  ? `${previousTicketCount - givenTicketCount} less tickets than at last visit`
-                  : `${givenTicketCount - previousTicketCount} more tickets than at last visit`
+                givenTicketCount !== previousTicketCount
+                  ? givenTicketCount < previousTicketCount
+                    ? `${previousTicketCount - givenTicketCount} tickets less than at last visit`
+                    : `${givenTicketCount - previousTicketCount} tickets more than at last visit`
+                  : 'Same amount of tickets as on last visit'
               }
             >
               <Chip
                 sx={{ml: 1}}
-                color={givenTicketCount < previousTicketCount ? 'success' : 'error'}
-                label={`${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`}
+                color={
+                  givenTicketCount !== previousTicketCount
+                    ? givenTicketCount < previousTicketCount
+                      ? 'success'
+                      : 'error'
+                    : 'warning'
+                }
+                label={
+                  givenTicketCount === previousTicketCount
+                    ? '0'
+                    : `${givenTicketCount - previousTicketCount > 0 ? '+' : ''}${givenTicketCount - previousTicketCount}`
+                }
                 size="small"
               />
             </Tooltip>

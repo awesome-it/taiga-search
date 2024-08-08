@@ -5,6 +5,7 @@ interface FilterDataInterface extends Record<string, any> {}
 
 type FilterData = FilterDataInterface & {
   projects?: number[]
+  projectsExclude?: boolean
   doneTickets?: boolean
   assignees?: number[]
   statuses?: string[]

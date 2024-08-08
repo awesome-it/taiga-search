@@ -60,6 +60,33 @@ function AssigneesFilter() {
   )
 }
 
+function ProjectsExcludeCheckbox() {
+  const filters = useTemporaryFilters()
+  const setFilters = useTemporaryFiltersDispatch()
+
+  const handleChange = (_event: SyntheticEvent, checked: boolean) => {
+    setFilters(oldFilters => {
+      return {
+        ...oldFilters,
+        projectsExclude: checked,
+      }
+    })
+  }
+
+  return (
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={filters.projectsExclude}
+          onChange={handleChange}
+          inputProps={{'aria-label': 'exclude selected projects'}}
+        />
+      }
+      label="Exclude selected projects"
+    />
+  )
+}
+
 function DoneTicketsCheckbox() {
   const filters = useTemporaryFilters()
   const setFilters = useTemporaryFiltersDispatch()
@@ -78,7 +105,7 @@ function DoneTicketsCheckbox() {
       control={
         <Checkbox checked={filters.doneTickets} onChange={handleChange} inputProps={{'aria-label': 'done tickets'}} />
       }
-      label="Hide Resolved Tickets"
+      label="Show Resolved Tickets"
     />
   )
 }
@@ -90,6 +117,9 @@ function PowerSearchHint() {
       <ul>
         <li>
           project:<code>project_name</code>
+        </li>
+        <li>
+          project:<code>!project_name</code>
         </li>
         <li>
           status:<code>status</code>
@@ -161,6 +191,7 @@ function FilterDialog({isOpen, setOpen}: {isOpen: boolean; setOpen: (value: bool
           .
         </DialogContentText>
         <ProjectsFilter />
+        <ProjectsExcludeCheckbox />
         <AssigneesFilter />
         <StatusesFilter />
         <DoneTicketsCheckbox />

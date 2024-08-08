@@ -56,7 +56,7 @@ function SearchResults({searchTerm}: {searchTerm: string}) {
       // Powersearch on assignee
       search = search.replace(assigneeResult[0], '').trim()
     }
-    if (filters.doneTickets) {
+    if (!filters.doneTickets) {
       if (!search.includes('status__is_closed')) {
         search = `${search}&status__is_closed=false`
       }
