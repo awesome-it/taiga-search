@@ -1,4 +1,10 @@
 FROM node:21-alpine as base
+
+ARG VITE_TAIGA_BASE_URL
+ARG VITE_KEYCLOAK_URL
+ARG VITE_KEYCLOAK_REALM
+ARG VITE_KEYCLOAK_CLIENTID
+
 WORKDIR /usr/src/app
 COPY package.json ./
 RUN npm install
