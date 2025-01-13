@@ -1,5 +1,5 @@
 import {Button, Typography} from '@mui/material'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router'
 import {useCallback, useEffect, useMemo, useState} from 'react'
 import useTaigaQueries from '../queries/queries.ts'
 import TicketWidget from '../widgets/TicketWidget.tsx'

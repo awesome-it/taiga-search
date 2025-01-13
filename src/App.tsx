@@ -1,5 +1,5 @@
 import './App.css'
-import {useParams} from 'react-router-dom'
+import {useParams} from 'react-router'
 import {Box} from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import SearchForm from './features/search/SearchForm.tsx'

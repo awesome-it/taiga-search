@@ -1,6 +1,6 @@
 import {Box, Chip, Paper, Theme, Tooltip, Typography, useTheme} from '@mui/material'
 import {useMemo} from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams} from 'react-router'
 import {SxProps} from '@mui/system'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 import TicketList from './TicketList.tsx'

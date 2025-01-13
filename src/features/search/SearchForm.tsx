@@ -1,6 +1,6 @@
 import {Box, IconButton, InputAdornment, TextField} from '@mui/material'
 import {ChangeEvent, FormEventHandler, useCallback, useEffect, useRef, useState} from 'react'
-import {useLocation, useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 import {useFiltersDispatch} from '../filter/FilterProvider.tsx'
