@@ -1,7 +1,7 @@
 import {Stack, Tab, useMediaQuery, useTheme} from '@mui/material'
 import {TabContext, TabList, TabPanel, TabPanelProps} from '@mui/lab'
 import {SyntheticEvent, useCallback, useEffect, useMemo, useState} from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams} from 'react-router'
 import TicketWidget from './TicketWidget.tsx'
 import useTaigaQueries from '../queries/queries.ts'
 

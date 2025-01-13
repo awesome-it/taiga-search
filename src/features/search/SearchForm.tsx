@@ -1,6 +1,6 @@
 import {Box, IconButton, InputAdornment, TextField} from '@mui/material'
 import {ChangeEvent, FormEventHandler, useCallback, useEffect, useRef, useState} from 'react'
-import {useLocation, useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
 import {useFiltersDispatch} from '../filter/FilterProvider.tsx'
@@ -28,7 +28,7 @@ function SearchForm({searchTerm = ''}: {searchTerm?: string}) {
 
   // Run clear handler on location change
   const location = useLocation()
-  const inputField = useRef<HTMLInputElement>()
+  const inputField = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (location.pathname === '/') {
       setSearchInput('')
@@ -46,19 +46,21 @@ function SearchForm({searchTerm = ''}: {searchTerm?: string}) {
         value={searchInput}
         label="Search"
         onChange={onChangeHandler}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-          endAdornment: searchTerm && (
-            <InputAdornment position="end">
-              <IconButton aria-label="Clear search" onClick={onClearHandler}>
-                <ClearIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            endAdornment: searchTerm && (
+              <InputAdornment position="end">
+                <IconButton aria-label="Clear search" onClick={onClearHandler}>
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
         }}
       />
     </Box>
