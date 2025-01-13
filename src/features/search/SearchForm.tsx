@@ -28,7 +28,7 @@ function SearchForm({searchTerm = ''}: {searchTerm?: string}) {
 
   // Run clear handler on location change
   const location = useLocation()
-  const inputField = useRef<HTMLInputElement>()
+  const inputField = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (location.pathname === '/') {
       setSearchInput('')
