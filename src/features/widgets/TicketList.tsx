@@ -11,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import {useMemo} from 'react'
 import {Issue, Project, Task, UserStory} from '../../types/taiga.ts'
 
@@ -76,7 +76,7 @@ function TicketList({
   ) : (
     <Grid container flexDirection="column">
       {projects.map(project => (
-        <Grid xs={12} key={project.path}>
+        <Grid size={12} key={project.path}>
           <Card elevation={0} square sx={{borderLeft: `5px solid ${ticketColors[project.ticketType]}`}}>
             <CardActionArea
               component="a"
@@ -102,7 +102,7 @@ function TicketList({
         </Grid>
       ))}
       {tickets.map(ticket => (
-        <Grid xs={12} key={ticket.path}>
+        <Grid size={12} key={ticket.path}>
           <Card elevation={0} square sx={{borderLeft: `5px solid ${ticketColors[ticket.ticketType]}`}}>
             <CardActionArea
               component="a"

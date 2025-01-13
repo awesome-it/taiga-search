@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['@mui/material/Tooltip', '@emotion/styled', '@mui/material/Unstable_Grid2'],
+    include: ['@mui/material/Tooltip', '@emotion/styled', '@mui/material/Grid2'],
   },
   base: '/search',
   server: {
