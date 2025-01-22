@@ -1,4 +1,4 @@
-FROM node:21-alpine as base
+FROM node:22-alpine as base
 
 ARG VITE_TAIGA_BASE_URL
 ARG VITE_KEYCLOAK_URL
