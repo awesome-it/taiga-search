@@ -62,7 +62,7 @@ function MultiSelectFilter<Type extends Record<string, any>>({
       isOptionEqualToValue={equalityCheck}
       getOptionLabel={option => option[optionAttribute]}
       renderOption={(props, option, {selected}) => (
-        <li {...props}>
+        <li {...props} key={props.key}>
           <Checkbox icon={icon} checkedIcon={checkedIcon} sx={{mr: 1}} checked={selected} />
           {option[optionAttribute]}
         </li>

@@ -2,7 +2,7 @@ import {Stack, Tab, useMediaQuery, useTheme} from '@mui/material'
 import {TabContext, TabList, TabPanel, TabPanelProps} from '@mui/lab'
 import {SyntheticEvent, useCallback, useEffect, useMemo, useState} from 'react'
 import {useParams} from 'react-router'
-import TicketWidget from './TicketWidget.tsx'
+import TicketWidget, {WidgetElement} from './TicketWidget.tsx'
 import useTaigaQueries from '../queries/queries.ts'
 
 const CustomTabPanel = ({children, value, currentValue, ...props}: {currentValue?: string} & TabPanelProps) => (
@@ -72,17 +72,18 @@ export default function DashboardView() {
         label: 'My Tickets',
         tickets: allTickets.filter(ticket => !!user && !ticket.isProject && ticket.assigned_to === user.id),
         previousCount: ticketData.previous?.date !== new Date().toDateString() ? ticketData.previous?.assignedTo : 0,
-      },
+      } as WidgetElement,
       watched: {
         label: 'Watched Tickets',
         tickets: allTickets.filter(ticket => !ticket.isProject && ticket.is_watcher),
         previousCount: ticketData.previous?.date !== new Date().toDateString() ? ticketData.previous?.watched : 0,
-      },
+      } as WidgetElement,
       unassigned: {
         label: 'Unassigned Tickets',
         tickets: allTickets.filter(ticket => !ticket.isProject && !ticket.assigned_to),
         previousCount: ticketData.previous?.date !== new Date().toDateString() ? ticketData.previous?.unassigned : 0,
-      },
+        ignoreFilters: {assignee: true},
+      } as WidgetElement,
       withDeadline: {
         label: 'Tickets with Deadline',
         tickets: allTickets
@@ -91,7 +92,7 @@ export default function DashboardView() {
             !a.isProject && !b.isProject ? (a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0) : 0,
           ),
         previousCount: ticketData.previous?.date !== new Date().toDateString() ? ticketData.previous?.withDeadline : 0,
-      },
+      } as WidgetElement,
     }),
     [allTickets, ticketData, user],
   )
@@ -111,7 +112,7 @@ export default function DashboardView() {
         </TabList>
         {Object.entries(widgets).map(([key, value]) => (
           <CustomTabPanel key={key} value={key} currentValue={currentTab}>
-            <TicketWidget isLoading={isLoading} tickets={value.tickets} />
+            <TicketWidget isLoading={isLoading} tickets={value.tickets} ignoreFilters={value.ignoreFilters} />
           </CustomTabPanel>
         ))}
       </TabContext>
@@ -126,6 +127,7 @@ export default function DashboardView() {
           sx={{width: '50%'}}
           givenTicketCount={widgets.assignedTo.tickets.length}
           previousTicketCount={widgets.assignedTo.previousCount}
+          ignoreFilters={widgets.assignedTo.ignoreFilters}
         />
         <TicketWidget
           isLoading={isLoading}
@@ -134,6 +136,7 @@ export default function DashboardView() {
           sx={{width: '50%'}}
           givenTicketCount={widgets.watched.tickets.length}
           previousTicketCount={widgets.watched.previousCount}
+          ignoreFilters={widgets.watched.ignoreFilters}
         />
       </Stack>
       <Stack direction="row" sx={{minHeight: 0, height: '50%'}} gap={2}>
@@ -144,6 +147,7 @@ export default function DashboardView() {
           sx={{width: '50%'}}
           givenTicketCount={widgets.unassigned.tickets.length}
           previousTicketCount={widgets.unassigned.previousCount}
+          ignoreFilters={widgets.unassigned.ignoreFilters}
         />
         <TicketWidget
           isLoading={isLoading}
@@ -152,6 +156,7 @@ export default function DashboardView() {
           sx={{width: '50%'}}
           givenTicketCount={widgets.withDeadline.tickets.length}
           previousTicketCount={widgets.withDeadline.previousCount}
+          ignoreFilters={widgets.withDeadline.ignoreFilters}
         />
       </Stack>
     </Stack>
