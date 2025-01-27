@@ -7,10 +7,18 @@ import TicketList from './TicketList.tsx'
 import {useFilters} from '../filter/FilterProvider.tsx'
 import useTaigaQueries from '../queries/queries.ts'
 
+export type WidgetElement = {
+  label: string
+  tickets: (UserStory | Issue | Task | Project)[]
+  previousCount: number
+  ignoreFilters?: {assignee?: boolean}
+}
+
 function TicketWidget({
   tickets,
   title,
   isLoading = false,
+  ignoreFilters,
   givenTicketCount,
   previousTicketCount,
   sx,
@@ -18,6 +26,7 @@ function TicketWidget({
 }: React.PropsWithChildren<{
   tickets: (UserStory | Issue | Task | Project)[]
   isLoading?: boolean
+  ignoreFilters?: {assignee?: boolean}
   givenTicketCount?: number
   previousTicketCount?: number
   title?: string
@@ -63,7 +72,7 @@ function TicketWidget({
         }
       }
       const assigneeResult = assigneeRe.exec(searchTerm)
-      if (assigneeResult) {
+      if (assigneeResult && !ignoreFilters?.assignee) {
         // Powersearch on assignee
         const negation = assigneeResult[1] === '!'
         const assignee = assigneeResult[2].toLowerCase().replace(/"/g, '')
@@ -82,7 +91,7 @@ function TicketWidget({
           isFiltered = !isFiltered
         }
       }
-      if (isFiltered && filters && filters.assignees && filters.assignees.length > 0) {
+      if (isFiltered && filters && filters.assignees && filters.assignees.length > 0 && !ignoreFilters?.assignee) {
         if (!ticket.isProject) {
           isFiltered = filters.assignees.includes(ticket.assigned_to)
         }
@@ -124,7 +133,7 @@ function TicketWidget({
       }
       return isFiltered
     })
-  }, [allProjects, filters, searchTerm, tickets])
+  }, [allProjects, filters, ignoreFilters?.assignee, searchTerm, tickets])
 
   return (
     <Paper
