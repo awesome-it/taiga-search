@@ -7,6 +7,10 @@ include:
   - project: awesome/cicd
     file: docker.yml
     ref: v1.0
+    
+  - project: awesome/cicd
+    file: frontend.yml
+    ref: v1.0
 
 variables:
   DOCKER_REGISTRY: registry.awesome-it.de
