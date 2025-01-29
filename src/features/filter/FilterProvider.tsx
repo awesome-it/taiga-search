@@ -1,9 +1,7 @@
 import React, {createContext, ReactNode, useContext, useState} from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface FilterDataInterface extends Record<string, any> {}
-
-type FilterData = FilterDataInterface & {
+interface FilterData extends Record<string, any> {
   projects?: number[]
   projectsExclude?: boolean
   doneTickets?: boolean
