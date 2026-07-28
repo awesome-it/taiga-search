@@ -13,6 +13,10 @@ parserOptions:
   ecmaVersion: 2016
   sourceType: module
   requireConfigFile: false
+settings:
+  import/resolver:
+    typescript:
+      project: ./tsconfig.json
 env:
   es6: true
   jest: true
