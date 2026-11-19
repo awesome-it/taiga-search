@@ -228,3 +228,10 @@ export type Status = {
   project: number
   slug: string
 }
+
+export type UserStorageData = {
+  created_date: string
+  key: string
+  modified_date: string
+  value: string
+}

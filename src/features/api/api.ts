@@ -1,4 +1,4 @@
-import {Issue, Project, Status, Task, User, UserStory} from '../../types/taiga.ts'
+import {Issue, Project, Status, Task, User, UserStorageData, UserStory} from '../../types/taiga.ts'
 import useAuth from '../auth/authWrapper.ts'
 
 const useApi = () => {
@@ -10,16 +10,24 @@ const useApi = () => {
     // to silently resolve this remove the user from the auth object. This triggers reauthentication.
     auth.invalidateToken()
   }
-  async function useFetchWithPath(path: string) {
+  async function useFetchWithPath(path: string, init: RequestInit = {}) {
     const response = await fetch(`${import.meta.env.VITE_TAIGA_BASE_URL}${path}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-type': 'application/json',
         'x-disable-pagination': 'true',
       },
+      ...init,
     })
+    if (response.status === 404) {
+      return undefined
+    }
     if (!response.ok) {
-      const result = await response.json()
-      throw new Error(result.detail)
+      const result: {detail?: unknown} = await response.json().catch(() => ({}))
+      throw new Error(typeof result.detail === 'string' ? result.detail : response.statusText)
+    }
+    if (response.status === 204) {
+      return undefined
     }
     return response.json()
   }
@@ -40,6 +48,21 @@ const useApi = () => {
     searchTasks: async (searchTerm: string): Promise<Task[]> => useFetchWithPath(`/tasks?q=${searchTerm}`),
     searchUserStories: async (searchTerm: string): Promise<UserStory[]> =>
       useFetchWithPath(`/userstories?q=${searchTerm}`),
+    getUserStorageData: async (key: string): Promise<UserStorageData | undefined> =>
+      useFetchWithPath(`/user-storage/${key}`),
+    createUserStorageData: async (key: string, value: string): Promise<UserStorageData> =>
+      useFetchWithPath('/user-storage', {
+        method: 'POST',
+        body: JSON.stringify({key, value}),
+      }),
+    updateUserStorageData: async (key: string, value: string): Promise<UserStorageData> =>
+      useFetchWithPath(`/user-storage/${key}`, {
+        method: 'PATCH',
+        body: JSON.stringify({value}),
+      }),
+    deleteUserStorageData: async (key: string): Promise<void> => {
+      await useFetchWithPath(`/user-storage/${key}`, {method: 'DELETE'})
+    },
   }
 }
 
