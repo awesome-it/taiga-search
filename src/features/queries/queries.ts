@@ -1,7 +1,31 @@
-import {useQueries, useQuery} from '@tanstack/react-query'
+import {useMutation, useQueries, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useCallback, useMemo} from 'react'
 import useApi from '../api/api.ts'
 import {Issue, Project, Status, Task, UserStory} from '../../types/taiga.ts'
+
+export type QuickLink = {
+  text: string
+  url: string
+}
+
+const QUICK_LINKS_KEY = 'quick-links'
+
+const parseQuickLinks = (value: string | undefined): QuickLink[] => {
+  if (!value) {
+    return []
+  }
+  try {
+    const parsed = JSON.parse(value)
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+    return parsed.filter(
+      (link): link is QuickLink => !!link && typeof link.text === 'string' && typeof link.url === 'string',
+    )
+  } catch {
+    return []
+  }
+}
 
 const useUserQuery = () => {
   const {getUserData} = useApi()
@@ -229,6 +253,42 @@ const useAllTicketsQueries = ({enabled: givenEnabled}: {enabled?: boolean} = {en
   })
 }
 
+const useQuickLinks = () => {
+  const {data: user} = useUserQuery()
+  const {createUserStorageData, getUserStorageData, updateUserStorageData} = useApi()
+  const queryClient = useQueryClient()
+
+  const {data: quickLinks = [], isLoading} = useQuery({
+    enabled: !!user,
+    queryKey: ['quickLinks'],
+    queryFn: async (): Promise<QuickLink[]> => {
+      const storageData = await getUserStorageData(QUICK_LINKS_KEY)
+      return parseQuickLinks(storageData?.value)
+    },
+  })
+
+  const saveQuickLinks = useMutation({
+    mutationFn: async (links: QuickLink[]) => {
+      const value = JSON.stringify(links)
+      const existing = await getUserStorageData(QUICK_LINKS_KEY)
+      if (existing) {
+        return updateUserStorageData(QUICK_LINKS_KEY, value)
+      }
+      try {
+        return await createUserStorageData(QUICK_LINKS_KEY, value)
+      } catch {
+        // The key may have been created in between the GET and the POST, in that case update it
+        return updateUserStorageData(QUICK_LINKS_KEY, value)
+      }
+    },
+    onSuccess: (_data, savedLinks) => {
+      queryClient.setQueryData<QuickLink[]>(['quickLinks'], savedLinks)
+    },
+  })
+
+  return {isLoading, quickLinks, saveQuickLinks}
+}
+
 const useTaigaQueries = () => {
   return {
     useUserQuery,
@@ -237,6 +297,7 @@ const useTaigaQueries = () => {
     useAllTicketsQueries,
     useAllUsersQuery,
     useSearchAllTicketsQueries,
+    useQuickLinks,
   }
 }
 
